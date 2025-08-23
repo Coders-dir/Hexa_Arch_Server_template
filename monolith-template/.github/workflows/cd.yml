@@ -52,6 +52,19 @@ jobs:
             fi
           fi
 
+          # Create grafana admin secret (use provided secrets or fallback defaults)
+          if [ -n "${{ secrets.GRAFANA_ADMIN_USER }}" ] || [ -n "${{ secrets.GRAFANA_ADMIN_PASSWORD }}" ]; then
+            kubectl create secret generic grafana-admin \
+              --from-literal=username="${{ secrets.GRAFANA_ADMIN_USER }}" \
+              --from-literal=password="${{ secrets.GRAFANA_ADMIN_PASSWORD }}" \
+              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          else
+            kubectl create secret generic grafana-admin \
+              --from-literal=username="admin" \
+              --from-literal=password="admin" \
+              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          fi
+
           # Apply manifests
           # If SOPS key is supplied, decrypt encrypted manifests first
           if [ -n "${{ secrets.SOPS_AGE_KEY }}" ]; then
