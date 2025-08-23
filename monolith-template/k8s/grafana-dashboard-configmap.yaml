@@ -8,7 +8,19 @@ data:
   starter-dashboard.json: |
     {
       "annotations": {"list": []},
-      "panels": [],
+      "panels": [
+        {
+          "type": "graph",
+          "title": "Prometheus up()",
+          "targets": [
+            {
+              "expr": "up",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+        }
+      ],
       "title": "Starter Dashboard",
       "schemaVersion": 27,
       "version": 1
