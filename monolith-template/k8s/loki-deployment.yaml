@@ -37,3 +37,5 @@ spec:
         resources:
           requests:
             storage: 5Gi
+        # Optional: uncomment and set storageClassName for production clusters
+        # storageClassName: standard
