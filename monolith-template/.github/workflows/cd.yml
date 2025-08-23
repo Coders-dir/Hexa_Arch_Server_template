@@ -36,16 +36,20 @@ jobs:
               --dry-run=client -o yaml | kubectl apply -f - -n prod
           fi
 
-          # If ALERT_WEBHOOK_URL secret exists in GitHub, create a k8s secret for Alertmanager to use
-          if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ]; then
-            kubectl create secret generic alerting-secrets \
-              --from-literal=ALERT_WEBHOOK_URL="${{ secrets.ALERT_WEBHOOK_URL }}" \
-              --dry-run=client -o yaml | kubectl apply -f - -n prod
-          fi
-          if [ -n "${{ secrets.ALERT_SLACK_WEBHOOK }}" ]; then
-            kubectl create secret generic alerting-secrets \
-              --from-literal=ALERT_SLACK_WEBHOOK="${{ secrets.ALERT_SLACK_WEBHOOK }}" \
-              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          # If ALERT_WEBHOOK_URL or ALERT_SLACK_WEBHOOK secrets exist in GitHub, create a k8s secret for Alertmanager to use
+          if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ] || [ -n "${{ secrets.ALERT_SLACK_WEBHOOK }}" ]; then
+            # create an empty secret then add keys conditionally to avoid logs leaking
+            kubectl create secret generic alerting-secrets --dry-run=client -o yaml | kubectl apply -f - -n prod
+            if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ]; then
+              kubectl create secret generic alerting-secrets \
+                --from-literal=ALERT_WEBHOOK_URL="${{ secrets.ALERT_WEBHOOK_URL }}" \
+                --dry-run=client -o yaml | kubectl apply -f - -n prod
+            fi
+            if [ -n "${{ secrets.ALERT_SLACK_WEBHOOK }}" ]; then
+              kubectl create secret generic alerting-secrets \
+                --from-literal=ALERT_SLACK_WEBHOOK="${{ secrets.ALERT_SLACK_WEBHOOK }}" \
+                --dry-run=client -o yaml | kubectl apply -f - -n prod
+            fi
           fi
 
           # Apply manifests
@@ -63,20 +67,8 @@ PY
             kubectl apply -f /tmp -n prod || true
           fi
 
-          # Apply alerting stack first (Alertmanager + Config)
-          if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ] || [ -n "${{ secrets.ALERT_SLACK_WEBHOOK }}" ]; then
-            # Render alertmanager config with any present secrets
-            cp k8s/alertmanager-configmap.yaml /tmp/alertmanager-configmap.yaml
-            if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ]; then
-              sed -i "s|__ALERT_WEBHOOK_URL__|${{ secrets.ALERT_WEBHOOK_URL }}|g" /tmp/alertmanager-configmap.yaml
-            fi
-            if [ -n "${{ secrets.ALERT_SLACK_WEBHOOK }}" ]; then
-              sed -i "s|__ALERT_SLACK_WEBHOOK__|${{ secrets.ALERT_SLACK_WEBHOOK }}|g" /tmp/alertmanager-configmap.yaml
-            fi
-            kubectl apply -f /tmp/alertmanager-configmap.yaml -n prod || true
-          else
-            if [ -f k8s/alertmanager-configmap.yaml ]; then kubectl apply -f k8s/alertmanager-configmap.yaml -n prod || true; fi
-          fi
+          # Apply alerting stack first (Alertmanager + Config). Alertmanager will read secrets mounted at runtime.
+          if [ -f k8s/alertmanager-configmap.yaml ]; then kubectl apply -f k8s/alertmanager-configmap.yaml -n prod || true; fi
           if [ -f k8s/alertmanager-deployment.yaml ]; then kubectl apply -f k8s/alertmanager-deployment.yaml -n prod || true; fi
           if [ -f k8s/alertmanager-service.yaml ]; then kubectl apply -f k8s/alertmanager-service.yaml -n prod || true; fi
 

@@ -12,6 +12,44 @@ spec:
       labels:
         app: alertmanager
     spec:
+      volumes:
+        - name: config
+          configMap:
+            name: alertmanager-config
+        - name: alerting-secrets
+          secret:
+            secretName: alerting-secrets
+            optional: true
+        - name: runtime-config
+          emptyDir: {}
+      initContainers:
+        - name: render-alertmanager-config
+          image: busybox:1.36.1
+          command:
+            - sh
+            - -c
+            - |
+              set -euo pipefail
+              mkdir -p /tmp
+              # copy base config from configmap
+              cp /config/alertmanager.yml /tmp/alertmanager.yml
+              # substitute webhook placeholders with secret file contents if present
+              if [ -f /etc/alerting-secrets/ALERT_WEBHOOK_URL ]; then
+                WEBHOOK=$(cat /etc/alerting-secrets/ALERT_WEBHOOK_URL)
+                sed -i "s|__ALERT_WEBHOOK_URL__|${WEBHOOK}|g" /tmp/alertmanager.yml || true
+              fi
+              if [ -f /etc/alerting-secrets/ALERT_SLACK_WEBHOOK ]; then
+                SLACK=$(cat /etc/alerting-secrets/ALERT_SLACK_WEBHOOK)
+                sed -i "s|__ALERT_SLACK_WEBHOOK__|${SLACK}|g" /tmp/alertmanager.yml || true
+              fi
+              mv /tmp/alertmanager.yml /etc/alertmanager/alertmanager.yml
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: alerting-secrets
+              mountPath: /etc/alerting-secrets
+            - name: runtime-config
+              mountPath: /etc/alertmanager
       containers:
         - name: alertmanager
           image: prom/alertmanager:v0.25.0
@@ -20,9 +58,5 @@ spec:
           ports:
             - containerPort: 9093
           volumeMounts:
-            - name: config
+            - name: runtime-config
               mountPath: /etc/alertmanager
-      volumes:
-        - name: config
-          configMap:
-            name: alertmanager-config
