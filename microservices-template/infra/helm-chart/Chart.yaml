@@ -1,0 +1,4 @@
+apiVersion: v2
+name: hexa-microservices
+version: 0.1.0
+description: Helm chart for microservices monorepo

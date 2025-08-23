@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  labels:
+    grafana_dashboard: "1"
+data:
+  starter-dashboard.json: |
+    {
+      "annotations": {"list": []},
+      "panels": [
+        {
+          "type": "graph",
+          "title": "Prometheus up()",
+          "targets": [ { "expr": "up", "refId": "A" } ],
+          "gridPos": {"h": 6, "w": 24, "x": 0, "y": 0}
+        },
+        {
+          "type": "graph",
+          "title": "Request Rate (http_requests_total)",
+          "targets": [ { "expr": "sum(rate(http_requests_total[1m])) by (job)", "refId": "B" } ],
+          "gridPos": {"h": 6, "w": 12, "x": 0, "y": 6}
+        },
+        {
+          "type": "graph",
+          "title": "Error Rate (5xx)",
+          "targets": [ { "expr": "sum(rate(http_requests_total{status=~\"5..\"}[1m])) by (job)", "refId": "C" } ],
+          "gridPos": {"h": 6, "w": 12, "x": 12, "y": 6}
+        },
+        {
+          "type": "graph",
+          "title": "Latency (p50/p95)",
+          "targets": [
+            { "expr": "histogram_quantile(0.5, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, job))", "refId": "D" },
+            { "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, job))", "refId": "E" }
+          ],
+          "gridPos": {"h": 6, "w": 24, "x": 0, "y": 12}
+        }
+      ],
+      "title": "Starter Dashboard",
+      "schemaVersion": 27,
+      "version": 1
+    }

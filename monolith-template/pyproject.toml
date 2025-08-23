@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "hexa-monolith-template"
+version = "0.1.0"
+description = "Hexagonal architecture monolith template (FastAPI)"
+authors = ["Coders-dir <dev@example.com>"]
+packages = [
+	{ include = "src" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.100.0"
+# async db driver placeholder
+motor = "^3.1.1"
+pydantic = "^2.6.0"
+python-dotenv = "^1.0.0"
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+prometheus-client = "^0.16.0"
+aioredis = "^2.0.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^8.4.0"
+pytest-asyncio = "^0.21.0"
+black = "^24.3.0"
+# ruff removed to avoid Poetry resolution issues in CI image; add via pre-commit if needed
+
+[build-system]
+requires = ["poetry-core>=1.5.0"]
+build-backend = "poetry.core.masonry.api"

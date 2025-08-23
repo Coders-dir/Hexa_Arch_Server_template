@@ -1,0 +1,28 @@
+services:
+  mongo:
+    image: mongo:6.0
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo-data:/data/db
+  app:
+    build: .
+    # Use python -m uvicorn so the module is executed through the interpreter
+    # (matches the Dockerfile CMD and avoids requiring uvicorn to be on $PATH)
+    command: ["python", "-m", "uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    volumes:
+      - ./:/app
+    ports:
+      - 8000:8000
+    environment:
+      - DATABASE_URL=mongodb://root:example@mongo:27017/app_db
+      - JWT_SECRET=devsecret
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:
+    driver: local

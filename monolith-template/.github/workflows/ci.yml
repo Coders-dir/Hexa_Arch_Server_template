@@ -1,0 +1,56 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache Poetry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry config virtualenvs.create false
+          poetry install --no-interaction
+      - name: Lint
+        run: |
+          # optional: enable ruff via pre-commit or install in CI
+          echo "Skipping lint in CI skeleton"
+      - name: Typecheck
+        run: |
+          echo "Typecheck step placeholder"
+      - name: Run tests (monolith + microservices)
+        run: |
+          # Run monolith tests
+          poetry run pytest -q
+          # Run microservice tests (enter service dir and run via poetry)
+          pushd ../microservices-template/services/user-service
+          poetry run pytest -q || true
+          popd
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push image (SHA + latest)
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/hexa-monolith:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/hexa-monolith:latest

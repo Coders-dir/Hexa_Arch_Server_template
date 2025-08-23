@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+data:
+  fluent-bit.conf: |-
+    [SERVICE]
+        Flush        1
+        Daemon       Off
+        Log_Level    info
+
+    [INPUT]
+        Name          tail
+        Path          /var/log/containers/*.log
+        Parser        docker
+        Tag           kube.*
+
+    [OUTPUT]
+        Name          loki
+        Match         *
+        Url           http://loki:3100/loki/api/v1/push
+        LabelKeys     kubernetes.labels
+
+  parsers.conf: |-
+    [PARSER]
+        Name   docker
+        Format json
+        Time_Key time

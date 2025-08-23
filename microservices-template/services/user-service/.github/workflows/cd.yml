@@ -1,0 +1,62 @@
+name: CD - user-service
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+      - name: Deploy to k8s
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          export KUBECONFIG=$(pwd)/kubeconfig
+          kubectl create namespace prod --dry-run=client -o yaml | kubectl apply -f -
+
+          # If ALERT_WEBHOOK_URL or ALERT_SLACK_WEBHOOK secrets exist in GitHub, create a k8s secret for Alertmanager to use
+          if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ] || [ -n "${{ secrets.ALERT_SLACK_WEBHOOK }}" ]; then
+            kubectl create secret generic alerting-secrets --dry-run=client -o yaml | kubectl apply -f - -n prod
+            if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ]; then
+              kubectl create secret generic alerting-secrets \
+                --from-literal=ALERT_WEBHOOK_URL="${{ secrets.ALERT_WEBHOOK_URL }}" \
+                --dry-run=client -o yaml | kubectl apply -f - -n prod
+            fi
+            if [ -n "${{ secrets.ALERT_SLACK_WEBHOOK }}" ]; then
+              kubectl create secret generic alerting-secrets \
+                --from-literal=ALERT_SLACK_WEBHOOK="${{ secrets.ALERT_SLACK_WEBHOOK }}" \
+                --dry-run=client -o yaml | kubectl apply -f - -n prod
+            fi
+          fi
+
+          # Apply alerting + prometheus + app manifests
+          # Apply alerting stack; Alertmanager will read mounted secrets at runtime
+          if [ -f k8s/alertmanager-configmap.yaml ]; then kubectl apply -f k8s/alertmanager-configmap.yaml -n prod || true; fi
+          if [ -f k8s/alertmanager-deployment.yaml ]; then kubectl apply -f k8s/alertmanager-deployment.yaml -n prod || true; fi
+          if [ -f k8s/alertmanager-service.yaml ]; then kubectl apply -f k8s/alertmanager-service.yaml -n prod || true; fi
+          # Create grafana admin secret if present (keeps deployments idempotent across templates)
+          if [ -n "${{ secrets.GRAFANA_ADMIN_USER }}" ] || [ -n "${{ secrets.GRAFANA_ADMIN_PASSWORD }}" ]; then
+            kubectl create secret generic grafana-admin \
+              --from-literal=username="${{ secrets.GRAFANA_ADMIN_USER }}" \
+              --from-literal=password="${{ secrets.GRAFANA_ADMIN_PASSWORD }}" \
+              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          else
+            kubectl create secret generic grafana-admin \
+              --from-literal=username="admin" \
+              --from-literal=password="admin" \
+              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          fi
+          if [ -f k8s/prometheus-configmap.yaml ]; then kubectl apply -f k8s/prometheus-configmap.yaml -n prod || true; fi
+          if [ -f k8s/prometheus-rules.yaml ]; then kubectl apply -f k8s/prometheus-rules.yaml -n prod || true; fi
+          if [ -f k8s/prometheus-deployment.yaml ]; then kubectl apply -f k8s/prometheus-deployment.yaml -n prod || true; fi
+          if [ -f k8s/prometheus-service.yaml ]; then kubectl apply -f k8s/prometheus-service.yaml -n prod || true; fi
+
+          kubectl apply -f k8s/deployment.yaml -n prod
+          kubectl apply -f k8s/service.yaml -n prod
+          if [ -f k8s/fluentbit-configmap.yaml ]; then kubectl apply -f k8s/fluentbit-configmap.yaml -n prod || true; fi
+          if [ -f k8s/fluentbit-daemonset.yaml ]; then kubectl apply -f k8s/fluentbit-daemonset.yaml -n prod || true; fi

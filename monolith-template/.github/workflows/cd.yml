@@ -1,0 +1,102 @@
+name: CD
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+      - name: Deploy to k8s
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          # Decode kubeconfig supplied as a repository secret (base64 encoded)
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          export KUBECONFIG=$(pwd)/kubeconfig
+
+          # Create namespace if missing (idempotent)
+          kubectl create namespace prod --dry-run=client -o yaml | kubectl apply -f -
+
+          # Create or update Kubernetes secrets from GitHub Actions secrets.
+          # Avoid printing secret values in logs by using --dry-run=client and piping to apply.
+          kubectl create secret generic app-secrets \
+            --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL_PROD }}" \
+            --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+            --dry-run=client -o yaml | kubectl apply -f - -n prod
+
+          # If optional secrets are present, merge them into the same secret safely.
+          if [ -n "${{ secrets.SENTRY_DSN }}" ]; then
+            kubectl create secret generic app-secrets \
+              --from-literal=SENTRY_DSN="${{ secrets.SENTRY_DSN }}" \
+              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          fi
+
+          # If ALERT_WEBHOOK_URL or ALERT_SLACK_WEBHOOK secrets exist in GitHub, create a k8s secret for Alertmanager to use
+          if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ] || [ -n "${{ secrets.ALERT_SLACK_WEBHOOK }}" ]; then
+            # create an empty secret then add keys conditionally to avoid logs leaking
+            kubectl create secret generic alerting-secrets --dry-run=client -o yaml | kubectl apply -f - -n prod
+            if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ]; then
+              kubectl create secret generic alerting-secrets \
+                --from-literal=ALERT_WEBHOOK_URL="${{ secrets.ALERT_WEBHOOK_URL }}" \
+                --dry-run=client -o yaml | kubectl apply -f - -n prod
+            fi
+            if [ -n "${{ secrets.ALERT_SLACK_WEBHOOK }}" ]; then
+              kubectl create secret generic alerting-secrets \
+                --from-literal=ALERT_SLACK_WEBHOOK="${{ secrets.ALERT_SLACK_WEBHOOK }}" \
+                --dry-run=client -o yaml | kubectl apply -f - -n prod
+            fi
+          fi
+
+          # Create grafana admin secret (use provided secrets or fallback defaults)
+          if [ -n "${{ secrets.GRAFANA_ADMIN_USER }}" ] || [ -n "${{ secrets.GRAFANA_ADMIN_PASSWORD }}" ]; then
+            kubectl create secret generic grafana-admin \
+              --from-literal=username="${{ secrets.GRAFANA_ADMIN_USER }}" \
+              --from-literal=password="${{ secrets.GRAFANA_ADMIN_PASSWORD }}" \
+              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          else
+            kubectl create secret generic grafana-admin \
+              --from-literal=username="admin" \
+              --from-literal=password="admin" \
+              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          fi
+
+          # Apply manifests
+          # If SOPS key is supplied, decrypt encrypted manifests first
+          if [ -n "${{ secrets.SOPS_AGE_KEY }}" ]; then
+            echo "SOPS key present - attempting to decrypt infra/secrets/*.enc.yaml"
+            python - <<'PY'
+import os,glob,subprocess
+files=glob.glob('infra/secrets/*.enc.yaml')
+for f in files:
+  out='/tmp/'+os.path.basename(f).replace('.enc.yaml','.yaml')
+  subprocess.check_call(['sops','-d',f,'-o',out])
+  print('decrypted',f,'->',out)
+PY
+            kubectl apply -f /tmp -n prod || true
+          fi
+
+          # Apply alerting stack first (Alertmanager + Config). Alertmanager will read secrets mounted at runtime.
+          if [ -f k8s/alertmanager-configmap.yaml ]; then kubectl apply -f k8s/alertmanager-configmap.yaml -n prod || true; fi
+          if [ -f k8s/alertmanager-deployment.yaml ]; then kubectl apply -f k8s/alertmanager-deployment.yaml -n prod || true; fi
+          if [ -f k8s/alertmanager-service.yaml ]; then kubectl apply -f k8s/alertmanager-service.yaml -n prod || true; fi
+
+          # Apply Prometheus configuration and rules (if present)
+          if [ -f k8s/prometheus-configmap.yaml ]; then kubectl apply -f k8s/prometheus-configmap.yaml -n prod || true; fi
+          if [ -f k8s/prometheus-rules.yaml ]; then kubectl apply -f k8s/prometheus-rules.yaml -n prod || true; fi
+          if [ -f k8s/prometheus-rules-configmap.yaml ]; then kubectl apply -f k8s/prometheus-rules-configmap.yaml -n prod || true; fi
+          # Apply Prometheus deployment and service if present
+          if [ -f k8s/prometheus-deployment.yaml ]; then kubectl apply -f k8s/prometheus-deployment.yaml -n prod || true; fi
+          if [ -f k8s/prometheus-service.yaml ]; then kubectl apply -f k8s/prometheus-service.yaml -n prod || true; fi
+
+          # Apply logging (Fluent Bit) manifests if present
+          if [ -f k8s/fluentbit-configmap.yaml ]; then kubectl apply -f k8s/fluentbit-configmap.yaml -n prod || true; fi
+          if [ -f k8s/fluentbit-daemonset.yaml ]; then kubectl apply -f k8s/fluentbit-daemonset.yaml -n prod || true; fi
+
+          # Finally apply application manifests
+          kubectl apply -f k8s/deployment.yaml -n prod
+          kubectl apply -f k8s/service.yaml -n prod
