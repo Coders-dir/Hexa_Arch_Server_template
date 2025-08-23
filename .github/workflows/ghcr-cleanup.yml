@@ -1,0 +1,24 @@
+name: GHCR Cleanup
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Container package name (e.g. hexa-monolith)'
+        required: true
+      keep:
+        description: 'Number of recent versions to keep'
+        required: true
+        default: '10'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List package versions
+        run: |
+          echo "Listing versions for ${{ github.repository_owner }}/$INPUT_PACKAGE"
+          gh api --method GET /orgs/${{ github.repository_owner }}/packages/container/${{ github.event.inputs.package }}/versions --paginate > versions.json
+          cat versions.json
+      - name: Delete old versions (manual review recommended)
+        run: |
+          echo "This workflow prints versions.json; use gh api to delete specific versions as needed."

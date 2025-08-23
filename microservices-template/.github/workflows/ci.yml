@@ -1,0 +1,39 @@
+name: CI Services
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  services:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ["user-service"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Cache Poetry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+      - name: Install deps
+        run: |
+          cd services/${{ matrix.service }}
+          pip install poetry
+          poetry config virtualenvs.create false
+          poetry install --no-interaction
+      - name: Run tests
+        run: |
+          cd services/${{ matrix.service }}
+          poetry run pytest -q
+      - name: Run compose smoke (optional)
+        run: |
+          cd services/${{ matrix.service }}
+          chmod +x run_smoke.sh || true
+          ./run_smoke.sh

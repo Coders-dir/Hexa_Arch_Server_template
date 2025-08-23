@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 5m
+    route:
+      receiver: 'default'
+    receivers:
+      - name: 'default'
+        # Placeholder - add an email_configs or slack_configs here in your cluster with real endpoints
+        email_configs: []
+      - name: 'webhook'
+        webhook_configs:
+          - url: '__ALERT_WEBHOOK_URL__' # rendered during CD if ALERT_WEBHOOK_URL secret is present
+      - name: 'slack'
+        slack_configs:
+          - api_url: '__ALERT_SLACK_WEBHOOK__' # rendered during CD if ALERT_SLACK_WEBHOOK secret is present
+

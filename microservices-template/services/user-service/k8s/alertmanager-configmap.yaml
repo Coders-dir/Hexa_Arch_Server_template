@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 5m
+    route:
+      receiver: 'default'
+    receivers:
+      - name: 'default'
+        email_configs: []
+      - name: 'webhook'
+        webhook_configs:
+          - url: '__ALERT_WEBHOOK_URL__'
+      - name: 'slack'
+        slack_configs:
+          - api_url: '__ALERT_SLACK_WEBHOOK__'
