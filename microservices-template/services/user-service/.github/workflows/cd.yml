@@ -39,6 +39,18 @@ jobs:
           if [ -f k8s/alertmanager-configmap.yaml ]; then kubectl apply -f k8s/alertmanager-configmap.yaml -n prod || true; fi
           if [ -f k8s/alertmanager-deployment.yaml ]; then kubectl apply -f k8s/alertmanager-deployment.yaml -n prod || true; fi
           if [ -f k8s/alertmanager-service.yaml ]; then kubectl apply -f k8s/alertmanager-service.yaml -n prod || true; fi
+          # Create grafana admin secret if present (keeps deployments idempotent across templates)
+          if [ -n "${{ secrets.GRAFANA_ADMIN_USER }}" ] || [ -n "${{ secrets.GRAFANA_ADMIN_PASSWORD }}" ]; then
+            kubectl create secret generic grafana-admin \
+              --from-literal=username="${{ secrets.GRAFANA_ADMIN_USER }}" \
+              --from-literal=password="${{ secrets.GRAFANA_ADMIN_PASSWORD }}" \
+              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          else
+            kubectl create secret generic grafana-admin \
+              --from-literal=username="admin" \
+              --from-literal=password="admin" \
+              --dry-run=client -o yaml | kubectl apply -f - -n prod
+          fi
           if [ -f k8s/prometheus-configmap.yaml ]; then kubectl apply -f k8s/prometheus-configmap.yaml -n prod || true; fi
           if [ -f k8s/prometheus-rules.yaml ]; then kubectl apply -f k8s/prometheus-rules.yaml -n prod || true; fi
           if [ -f k8s/prometheus-deployment.yaml ]; then kubectl apply -f k8s/prometheus-deployment.yaml -n prod || true; fi
