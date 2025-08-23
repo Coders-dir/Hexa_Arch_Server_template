@@ -11,13 +11,25 @@ This document summarizes the current repository state, required secrets, deploy 
 - Prometheus and Alertmanager manifests added to both templates. Prometheus rules exist as both PrometheusRule CR and a rules ConfigMap (for non-Operator setups).
 
 2) Required repository / environment secrets (GitHub Actions)
-- KUBE_CONFIG (base64-encoded kubeconfig for the target cluster)
-- DATABASE_URL_PROD (production DB URL)
-- JWT_SECRET
-- GHCR credentials if pushing images to GHCR (or rely on GITHUB_TOKEN)
-- ALERT_WEBHOOK_URL (optional) — webhook for Alertmanager receiver, will create k8s secret `alerting-secrets` if present
-- SOPS_AGE_KEY (optional) — if using SOPS-encrypted manifests under `infra/secrets/`
-- SENTRY_DSN (optional)
+
+| Secret | Typical source / provider | Subscription (paid / free) | Where to find it (web UI / docs) |
+|---|---|---:|---|
+| KUBE_CONFIG | Kubernetes cluster provider (GKE, EKS, AKS) or self-hosted cluster | Depends on provider (GCP/AWS/Azure paid tiers available; self-hosted free) | GKE: https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl ; EKS: https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html ; AKS: https://learn.microsoft.com/azure/aks/kubeconfig |
+| DATABASE_URL_PROD | Managed DB (AWS RDS, Cloud SQL, Azure DB), or self-hosted Postgres/MySQL | Depends on provider (managed DBs typically paid) | RDS: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.html ; Cloud SQL: https://cloud.google.com/sql/docs/mysql/connect-admin |
+| JWT_SECRET | Generated secret (recommended: long random string). Example generator: jwtsecrets.com | Free | jwtsecrets.com — generate a secure token; or generate locally: `openssl rand -hex 32` |
+| GHCR credentials | GitHub Container Registry (GHCR) — use GitHub username & PAT or GITHUB_TOKEN in Actions | Free for public; private packages subject to GitHub plan | https://docs.github.com/en/packages/working-with-a-github-packages-registry/about-github-container-registry |
+| ALERT_WEBHOOK_URL | Receiver webhook (Slack Incoming Webhook, generic HTTP webhook, PagerDuty, etc.) | Depends on provider (Slack has free tier) | Slack: https://api.slack.com/messaging/webhooks ; PagerDuty: https://support.pagerduty.com/docs |
+| SOPS_AGE_KEY | age key used by SOPS for encrypted manifests (generated locally) | Free (open-source) | SOPS docs: https://github.com/ProtonMail/gopenpgp or https://github.com/containers/skopeo; age docs: https://age-encryption.org/ |
+| SENTRY_DSN | Sentry project DSN from Sentry.io project settings | Sentry has free tier | https://docs.sentry.io/product/sentry-basics/dsn-explainer/ |
+
+JWT secret example (free generator)
+
+Example JWT secret (DO NOT USE IN PRODUCTION — rotate before use):
+
+```
+46869a7b1a2d2a75081def16b7f1244e162cbeeee9ec206ee918f82dab7642e5
+```
+
 
 3) Deploy (what CD does)
 - Push to `main` triggers CD.
