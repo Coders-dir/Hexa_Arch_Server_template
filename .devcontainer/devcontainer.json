@@ -1,0 +1,13 @@
+{
+  "name": "Hexa Arch Devcontainer",
+  "image": "mcr.microsoft.com/vscode/devcontainers/python:3.11",
+  "features": {
+    "docker-in-docker": "latest"
+  },
+  "postCreateCommand": "./infra/scripts/bootstrap-codespace.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [ "ms-azuretools.vscode-docker", "eamodio.gitlens" ]
+    }
+  }
+}
