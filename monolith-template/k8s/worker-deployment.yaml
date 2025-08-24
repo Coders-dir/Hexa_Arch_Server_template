@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hexa-worker
+  labels:
+    app: hexa-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hexa-worker
+  template:
+    metadata:
+      labels:
+        app: hexa-worker
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/coders-dir/hexa-monolith:latest
+          command: ["/usr/local/bin/python", "-m", "src.app.worker"]
+          env:
+            - name: REDIS_URL
+              value: "redis://redis:6379"
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "256Mi"

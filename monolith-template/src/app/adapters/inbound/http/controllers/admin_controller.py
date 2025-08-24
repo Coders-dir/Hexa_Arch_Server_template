@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Request, BackgroundTasks, Depends
 from pydantic import BaseModel
 import json
 import secrets
@@ -37,8 +37,11 @@ def _hash_token(token: str) -> str:
     return hashlib.pbkdf2_hmac("sha256", token.encode(), PEPPER.encode(), 100000).hex()
 
 
+from src.app.auth import get_current_admin
+
+
 @router.post("/admin/api-keys", response_model=dict)
-async def create_key(req: CreateKeyRequest, request: Request, background_tasks: BackgroundTasks):
+async def create_key(req: CreateKeyRequest, request: Request, background_tasks: BackgroundTasks, _admin=Depends(get_current_admin)):
     kid = str(uuid4())
     token = secrets.token_urlsafe(32)
     hashed = _hash_token(token)
@@ -67,7 +70,7 @@ async def create_key(req: CreateKeyRequest, request: Request, background_tasks: 
 
 
 @router.get("/admin/api-keys", response_model=List[KeyInfo])
-async def list_keys(request: Request):
+async def list_keys(request: Request, _admin=Depends(get_current_admin)):
     if os.getenv("USE_DB_KEYS") == "1":
         repo = getattr(request.app.state, "api_key_repo", None)
 
@@ -104,7 +107,7 @@ async def list_keys(request: Request):
 
 
 @router.post("/admin/api-keys/{kid}/revoke", response_model=dict)
-async def revoke_key(kid: str, request: Request, background_tasks: BackgroundTasks):
+async def revoke_key(kid: str, request: Request, background_tasks: BackgroundTasks, _admin=Depends(get_current_admin)):
     if os.getenv("USE_DB_KEYS") == "1":
         repo = getattr(request.app.state, "api_key_repo", None)
 
@@ -138,7 +141,7 @@ def _to_keyinfo(rec: dict) -> KeyInfo:
 
 
 @router.get("/admin/metrics", response_model=dict)
-async def admin_metrics(request: Request):
+async def admin_metrics(request: Request, _admin=Depends(get_current_admin)):
     # try to return repo metrics if available
     repo = getattr(request.app.state, "api_key_repo", None)
     if repo:
