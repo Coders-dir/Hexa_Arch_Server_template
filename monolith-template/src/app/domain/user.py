@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 @dataclass
@@ -11,4 +11,4 @@ class User:
 
     @staticmethod
     def create(email: str, name: str | None = None) -> "User":
-        return User(id=str(uuid4()), email=email, name=name, created_at=datetime.utcnow())
+        return User(id=str(uuid4()), email=email, name=name, created_at=datetime.now(timezone.utc))

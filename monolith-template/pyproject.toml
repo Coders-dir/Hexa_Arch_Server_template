@@ -17,10 +17,13 @@ python-dotenv = "^1.0.0"
 uvicorn = {extras = ["standard"], version = "^0.22.0"}
 prometheus-client = "^0.16.0"
 aioredis = "^2.0.1"
+httpx = "^0.25.0"
+asyncpg = "^0.30.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.4.0"
 pytest-asyncio = "^0.21.0"
+httpx = {version = "^0.25.0", optional = false}
 black = "^24.3.0"
 # ruff removed to avoid Poetry resolution issues in CI image; add via pre-commit if needed
 

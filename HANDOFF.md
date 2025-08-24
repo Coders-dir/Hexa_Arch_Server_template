@@ -60,5 +60,7 @@ Estimated prompts: 1–3 (I can complete everything in 2 prompts if you accept t
 - Render pipeline & CD updates already implemented to render Alertmanager config at deploy time.
 - Prometheus + Alertmanager deployments and services added for both templates.
 
-If you want me to continue with the remaining automation (add Slack/email receiver templates, Fluent Bit output to Loki, and a minimal Grafana dashboard + create a PR with all changes), I will proceed now and complete it within the next prompt.
+This file is a snapshot handoff. For the next development session see `NEXT_DEVELOPMENT.md` which lists prioritized tasks, acceptance criteria, and credentials notes.
+
+This session is a handoff: no further prompts are allowed in this session. To continue, open a new session and reference `NEXT_DEVELOPMENT.md`.
 
