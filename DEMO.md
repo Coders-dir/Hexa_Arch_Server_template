@@ -63,3 +63,8 @@ Where to find this doc
 ----------------------
 - `DEMO.md` (root) — this file
 - `monolith-template/DEV_HANDOFF.md` — developer handoff (linked to this demo)
+
+Extras
+------
+- `DEMO_HANDOUT.md` — one-page handout for distribution during the demo
+- `DEMO_SLIDES.md` — simple slide-style markdown you can present or paste into slides
