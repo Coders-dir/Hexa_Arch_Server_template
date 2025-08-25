@@ -25,6 +25,8 @@ pytest = "^8.4.0"
 pytest-asyncio = "^0.21.0"
 httpx = {version = "^0.25.0", optional = false}
 black = "^24.3.0"
+# Ensure redis package is available for type checking and CI
+redis = "^4.7.0"
 # ruff removed to avoid Poetry resolution issues in CI image; add via pre-commit if needed
 
 [build-system]
