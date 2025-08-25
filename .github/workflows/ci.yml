@@ -11,13 +11,11 @@ jobs:
     services: {}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Docker Compose
-        run: |
-          sudo apt-get update && sudo apt-get install -y docker-compose-plugin
-      - name: Start test services
-        run: |
-          cd monolith-template
-          docker compose -f docker-compose.test.yml up -d
+      - name: Start test services (docker compose action)
+        uses: docker/compose-action@v3
+        with:
+          files: monolith-template/docker-compose.test.yml
+          args: up -d
 
       - name: Wait for services
         run: |
@@ -47,3 +45,10 @@ jobs:
         run: |
           cd monolith-template
           poetry run pytest -q
+
+      - name: Tear down test services
+        if: always()
+        uses: docker/compose-action@v3
+        with:
+          files: monolith-template/docker-compose.test.yml
+          args: down
