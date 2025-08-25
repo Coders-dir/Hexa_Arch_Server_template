@@ -8,16 +8,6 @@ from typing import List
 from prometheus_client import Counter
 
 logger = logging.getLogger(__name__)
-import os
-import json
-import asyncpg
-import asyncio
-import logging
-import random
-from typing import List
-from prometheus_client import Counter
-
-logger = logging.getLogger(__name__)
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://test:test@127.0.0.1:5432/test_db")
 
@@ -77,7 +67,10 @@ class ApiKeyRepo:
             POOL_INIT_FAILURES.inc()
         except Exception:
             logger.debug("ApiKeyRepo: failed to increment POOL_INIT_FAILURES metric")
-        raise last_err
+        if isinstance(last_err, BaseException):
+            raise last_err
+        else:
+            raise RuntimeError("ApiKeyRepo initialization failed")
 
     async def close(self) -> None:
         if self._pool:
@@ -102,7 +95,10 @@ class ApiKeyRepo:
                     await asyncio.sleep(delay + jitter)
             if conn is None:
                 logger.error("ApiKeyRepo: per-call connect failed: %s", last_err)
-                raise last_err
+                if isinstance(last_err, BaseException):
+                    raise last_err
+                else:
+                    raise RuntimeError("ApiKeyRepo per-call connect failed")
             try:
                 await conn.execute(
                     """

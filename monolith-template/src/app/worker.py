@@ -1,8 +1,5 @@
 import asyncio
 import signal
-import os
-import time
-from typing import Optional
 
 from prometheus_client import Counter, Gauge
 

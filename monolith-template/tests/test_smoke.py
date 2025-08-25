@@ -1,12 +1,6 @@
-from pathlib import Path
-import sys
 import pytest
 from httpx import AsyncClient
 from httpx import ASGITransport
-
-# Ensure src is on path for test discovery when not installed
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
 
 from src.app.main import app
 

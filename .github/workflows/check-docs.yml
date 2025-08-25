@@ -1,0 +1,55 @@
+name: Check docs protection
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install project dependencies (Poetry)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install poetry
+          cd monolith-template
+          # install project dependencies so the script can import the app
+          poetry config virtualenvs.create false
+          poetry install --no-interaction || true
+      - name: Run docs protection check
+        run: |
+          cd monolith-template
+          python scripts/check_docs_protection.py
+name: Check docs protection
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install poetry
+          cd monolith-template
+          # install minimal runtime deps required by the docs check script
+          python -m pip install fastapi pydantic requests || true
+      - name: Run docs protection check
+        run: |
+          cd monolith-template
+          python scripts/check_docs_protection.py
