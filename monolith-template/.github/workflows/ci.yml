@@ -25,11 +25,21 @@ jobs:
           pip install poetry
           poetry config virtualenvs.create false
           poetry install --no-interaction
-      - name: Start test services (docker compose action)
-        uses: docker/compose-action@v3
-        with:
-          files: docker-compose.test.yml
-          args: up -d
+      - name: Start test services (bring up docker-compose.test.yml)
+        run: |
+          set -euo pipefail
+          COMPOSE_FILE=docker-compose.test.yml
+          if ! command -v docker >/dev/null 2>&1; then
+            echo "docker not found; installing docker and compose plugin"
+            sudo apt-get update
+            sudo apt-get install -y ca-certificates curl gnupg lsb-release
+            sudo mkdir -p /etc/apt/keyrings
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+            sudo apt-get update
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+          fi
+          docker compose -f "$COMPOSE_FILE" up -d
 
       - name: Wait for services to be healthy
         run: |
@@ -62,10 +72,12 @@ jobs:
 
       - name: Tear down test services
         if: always()
-        uses: docker/compose-action@v3
-        with:
-          files: docker-compose.test.yml
-          args: down
+        run: |
+          set -euo pipefail
+          COMPOSE_FILE=docker-compose.test.yml
+          if command -v docker >/dev/null 2>&1; then
+            docker compose -f "$COMPOSE_FILE" down || true
+          fi
       - name: Log in to GHCR
         uses: docker/login-action@v2
         with:
