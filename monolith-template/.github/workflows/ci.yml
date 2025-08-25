@@ -26,7 +26,7 @@ jobs:
           poetry config virtualenvs.create false
           poetry install --no-interaction
       - name: Start test services (docker compose action)
-        uses: docker/compose-action@v2
+        uses: docker/compose-action@v3
         with:
           files: docker-compose.test.yml
           args: up -d
@@ -62,7 +62,7 @@ jobs:
 
       - name: Tear down test services
         if: always()
-        uses: docker/compose-action@v2
+        uses: docker/compose-action@v3
         with:
           files: docker-compose.test.yml
           args: down
