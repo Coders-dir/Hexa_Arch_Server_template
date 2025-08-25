@@ -7,6 +7,7 @@ import os
 from typing import List
 from datetime import datetime, timezone
 from uuid import uuid4
+from src.app.auth import get_current_admin
 
 router = APIRouter()
 
@@ -37,7 +38,6 @@ def _hash_token(token: str) -> str:
     return hashlib.pbkdf2_hmac("sha256", token.encode(), PEPPER.encode(), 100000).hex()
 
 
-from src.app.auth import get_current_admin
 
 
 @router.post("/admin/api-keys", response_model=dict)

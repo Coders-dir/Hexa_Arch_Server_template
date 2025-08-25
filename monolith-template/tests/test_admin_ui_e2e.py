@@ -1,5 +1,4 @@
 import pytest
-import asyncio
 from src.app.auth import create_access_token
 from httpx import AsyncClient, ASGITransport
 import redis.asyncio as aioredis
@@ -47,7 +46,7 @@ async def test_admin_ui_e2e_and_datastores():
     await r.set('e2e:test', 'ok')
     v = await r.get('e2e:test')
     assert v.decode() == 'ok'
-    await r.close()
+    await r.aclose()
 
     # Mongo check
     m = AsyncIOMotorClient('mongodb://127.0.0.1:27017')

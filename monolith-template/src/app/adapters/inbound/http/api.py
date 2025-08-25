@@ -36,10 +36,8 @@ def init_app(app: FastAPI):
 
 	app.add_event_handler("startup", _startup)
 	# start a simple scheduler worker
-	import asyncio
 
 	async def _scheduler():
-		from src.app.adapters.outbound.redis_quota import QuotaManager
 		qm_local = qm
 		while True:
 			try:

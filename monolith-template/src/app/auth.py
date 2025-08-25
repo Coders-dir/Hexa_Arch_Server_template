@@ -30,7 +30,7 @@ def get_current_admin(request: Request):
     token = parts[1]
     try:
         payload = jwt.decode(token, SECRET, algorithms=[ALGORITHM])
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
     role = payload.get("role")
     if role != "admin":

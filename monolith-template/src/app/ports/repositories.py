@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Protocol
 from src.app.domain.user import User
 
 class UserRepository(ABC):

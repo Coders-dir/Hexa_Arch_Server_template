@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from typing import Any
 
-from src.app.services.user_service import UserService
 from src.app.adapters.outbound.supabase_client import SupabaseClient
 
 router = APIRouter()

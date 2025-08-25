@@ -1,0 +1,26 @@
+name: Check docs protection
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install poetry
+          cd monolith-template
+          python -m pip install -r <(echo "") || true
+      - name: Run docs protection check
+        run: |
+          cd monolith-template
+          python scripts/check_docs_protection.py

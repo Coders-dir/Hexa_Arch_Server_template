@@ -1,0 +1,80 @@
+{
+  "info": {
+    "_postman_id": "hexa-monolith-template",
+    "name": "Hexa Monolith Template - Smoke",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List API Keys (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/api-keys",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","admin","api-keys"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create API Key (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"demo-key\",\n  \"owner\": \"demo\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/api-keys",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","admin","api-keys"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "admin_token",
+      "value": ""
+    }
+  ]
+}

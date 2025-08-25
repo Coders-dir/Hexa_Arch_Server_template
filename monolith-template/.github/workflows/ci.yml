@@ -44,10 +44,18 @@ jobs:
         run: |
           # start local test stack
           docker compose -f docker-compose.test.yml up -d
-          # wait a bit for services to become healthy
-          sleep 10
-          # run the small admin UI e2e and datastore checks
-          poetry run pytest -q tests/test_admin_ui_e2e.py -q
+          # wait for Postgres to be ready
+          for i in {1..30}; do
+            docker exec monolith-template-postgres-1 pg_isready -U test && break || sleep 1
+          done
+          # apply DB migrations for api_keys
+          if [ -f db/migrations/001_create_api_keys.sql ]; then
+            cat db/migrations/001_create_api_keys.sql | docker exec -i monolith-template-postgres-1 psql -U test -d test_db || true
+          fi
+          # wait a bit for other services
+          sleep 5
+          # run the small admin UI e2e and datastore checks using DB-backed api keys
+          USE_DB_KEYS=1 poetry run pytest -q tests/test_admin_ui_e2e.py -q
           docker compose -f docker-compose.test.yml down
       - name: Log in to GHCR
         uses: docker/login-action@v2

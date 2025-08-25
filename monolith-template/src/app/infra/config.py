@@ -1,6 +1,7 @@
 from pydantic import BaseSettings, AnyUrl
 
-class Settings(BaseSettings):
+
+class Settings(BaseSettings):  # type: ignore
     app_env: str = "development"
     app_host: str = "0.0.0.0"
     app_port: int = 8000

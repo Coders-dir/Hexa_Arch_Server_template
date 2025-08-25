@@ -1,8 +1,15 @@
-import os
-import subprocess
-import time
+from pathlib import Path
+import sys
 
-import pytest
+# Add repo src to path for tests (must happen before importing test modules that use `src`)
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))  # noqa: E402
+
+import os  # noqa: E402
+import subprocess  # noqa: E402
+import time  # noqa: E402
+
+import pytest  # noqa: E402
 
 
 def _run_compose_up(compose_file: str):
@@ -80,9 +87,3 @@ def integration_dbs():
 
     # Teardown
     _run_compose_down(compose_file)
-import sys
-from pathlib import Path
-
-# Add repo src to path for tests
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))

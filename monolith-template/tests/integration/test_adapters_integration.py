@@ -1,4 +1,3 @@
-import asyncio
 import pytest
 
 from src.app.adapters.outbound.inmemory_user_repo import InMemoryUserRepo
