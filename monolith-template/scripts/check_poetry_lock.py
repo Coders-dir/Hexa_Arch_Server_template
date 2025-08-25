@@ -28,16 +28,35 @@ def main():
         print("poetry.lock not found; run `poetry lock` to generate one first.")
         return 1
 
-    # Try the modern check first
+    # Try the modern check first. Some Poetry versions don't support --check
+    # (they print a 'does not exist' message); capture output and inspect it so
+    # we can fall back to regenerate-and-compare instead of failing the job.
     try:
-        subprocess.check_call(["poetry", "lock", "--check"], cwd=cwd)
-        print("poetry lock is up-to-date (checked with --check)")
-        return 0
-    except subprocess.CalledProcessError:
-        print("poetry reported lock mismatch via --check or non-zero exit")
-        return 1
+        proc = subprocess.run(["poetry", "lock", "--check"], cwd=cwd, capture_output=True, text=True)
+        if proc.returncode == 0:
+            print("poetry lock is up-to-date (checked with --check)")
+            return 0
+
+        # Combine stdout/stderr and look for messages that indicate the option
+        # is not supported rather than a real lock mismatch.
+        combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
+        lowered = combined.lower()
+        unsupported_signals = [
+            "does not exist",
+            "no such option",
+            "unknown option",
+            "is not a command",
+            "is not a valid option",
+        ]
+        if any(s in lowered for s in unsupported_signals):
+            print("--check not supported by this poetry version; falling back to regenerate-and-compare")
+        else:
+            print("poetry reported lock mismatch via --check or non-zero exit")
+            print(combined)
+            return 1
     except Exception:
-        # Fallback path for Poetry versions without --check
+        # Fallback path for Poetry versions or environments where running
+        # the above fails; fall through to regenerate-and-compare.
         print("--check not supported; falling back to regenerate-and-compare")
 
     before = sha1(lock_path)
