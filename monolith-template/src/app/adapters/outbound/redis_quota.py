@@ -1,21 +1,14 @@
 import os
 import time
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Optional, Any
 
+# Pre-declare `redis` as Any so static checkers don't infer a Module|None union
+redis: Any = None
 try:
     import redis.asyncio as redis
 except Exception:
-    # If redis isn't available at type-check or runtime, fallback to None for runtime checks.
-    redis = None  # type: ignore
-
-if TYPE_CHECKING:
-    # Redis types are only imported for type checking to avoid runtime import issues
-    try:
-        # redis.asyncio exposes a Redis client class; import the annotation when type-checking
-        from redis.asyncio import Redis as _RedisClient  # type: ignore
-    except Exception:  # pragma: no cover - defensive for type-checker
-        class _RedisClient:  # type: ignore
-            pass
+    # If redis isn't available at runtime, keep redis as None and raise at init()
+    redis = None
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379")
 
@@ -29,7 +22,7 @@ class QuotaManager:
         self.redis_url = redis_url or REDIS_URL
         # client is assigned at init(); keep unannotated to avoid analyzer issues
 
-    # typed as Any at class level to keep runtime/dynamic import behavior simple
+    # client is Any because the redis client type is optional at runtime
     _client: Any = None
 
     async def init(self) -> None:
