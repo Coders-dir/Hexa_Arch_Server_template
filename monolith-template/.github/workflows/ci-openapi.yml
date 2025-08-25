@@ -1,0 +1,55 @@
+name: CI - OpenAPI Generation
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tools/**'
+
+jobs:
+  generate-openapi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Poetry
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+      - name: Install dependencies
+        run: |
+          poetry install --no-interaction
+      - name: Generate OpenAPI
+        id: gen
+        run: |
+          python tools/generate_openapi.py
+      - name: Upload OpenAPI artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi
+          path: src/app/openapi.json
+      - name: Validate generated OpenAPI
+        if: success()
+        run: |
+          python tools/validate_openapi.py
+      - name: Run contract check
+        if: success()
+        run: |
+          python tools/contract_check.py
+      - name: Comment on PR if OpenAPI generation failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'OpenAPI generation failed in CI. Ensure the FastAPI app imports cleanly and required dependencies are available. Run `tools/generate_openapi.py` locally after `poetry install` to reproduce.'
+            })

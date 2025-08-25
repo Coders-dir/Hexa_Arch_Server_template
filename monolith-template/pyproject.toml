@@ -29,6 +29,8 @@ redis = "^6.4.0"
 # Add test/runtime helpers used by the test suite
 pyjwt = "^2.8.0"
 requests = "^2.32.0"
+# BDD integration for requirements expressed as scenarios
+pytest-bdd = "^4.0.0"
 # ruff removed to avoid Poetry resolution issues in CI image; add via pre-commit if needed
 
 [build-system]
