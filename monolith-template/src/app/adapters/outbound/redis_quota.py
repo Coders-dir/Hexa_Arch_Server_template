@@ -1,12 +1,21 @@
 import os
 import time
-from typing import Optional, Any
+from typing import Optional, Any, TYPE_CHECKING
 
 try:
     import redis.asyncio as redis
 except Exception:
     # If redis isn't available at type-check or runtime, fallback to None for runtime checks.
     redis = None  # type: ignore
+
+if TYPE_CHECKING:
+    # Redis types are only imported for type checking to avoid runtime import issues
+    try:
+        # redis.asyncio exposes a Redis client class; import the annotation when type-checking
+        from redis.asyncio import Redis as _RedisClient  # type: ignore
+    except Exception:  # pragma: no cover - defensive for type-checker
+        class _RedisClient:  # type: ignore
+            pass
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379")
 
@@ -16,11 +25,12 @@ class QuotaManager:
 
     Score encoding for the priority queue: float(timestamp + delay) + small priority offset.
     """
-
     def __init__(self, redis_url: Optional[str] = None):
         self.redis_url = redis_url or REDIS_URL
-        # typed as Any to satisfy mypy for dynamic client assignment in init()
-        self._client: Any = None
+        # client is assigned at init(); keep unannotated to avoid analyzer issues
+
+    # typed as Any at class level to keep runtime/dynamic import behavior simple
+    _client: Any = None
 
     async def init(self) -> None:
         if redis is None:

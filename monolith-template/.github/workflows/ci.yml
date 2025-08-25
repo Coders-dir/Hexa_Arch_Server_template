@@ -25,6 +25,25 @@ jobs:
           pip install poetry
           poetry config virtualenvs.create false
           poetry install --no-interaction
+      - name: Start test services (docker compose action)
+        uses: docker/compose-action@v2
+        with:
+          files: docker-compose.test.yml
+          args: up -d
+
+      - name: Wait for services to be healthy
+        run: |
+          # wait for Postgres
+          for i in {1..30}; do
+            docker exec monolith-template-postgres-1 pg_isready -U test && break || sleep 1
+          done
+          # apply DB migrations for api_keys
+          if [ -f db/migrations/001_create_api_keys.sql ]; then
+            cat db/migrations/001_create_api_keys.sql | docker exec -i monolith-template-postgres-1 psql -U test -d test_db || true
+          fi
+          # wait a bit for other services
+          sleep 5
+
       - name: Lint
         run: |
           # optional: enable ruff via pre-commit or install in CI
@@ -40,28 +59,9 @@ jobs:
           pushd ../microservices-template/services/user-service
           poetry run pytest -q || true
           popd
-      - name: Start test services (docker compose action)
-        uses: docker/compose-action@v2
-        with:
-          files: docker-compose.test.yml
-          args: up -d
-
-      - name: Wait for Postgres and run e2e smoke
-        run: |
-          # wait for Postgres to be ready
-          for i in {1..30}; do
-            docker exec monolith-template-postgres-1 pg_isready -U test && break || sleep 1
-          done
-          # apply DB migrations for api_keys
-          if [ -f db/migrations/001_create_api_keys.sql ]; then
-            cat db/migrations/001_create_api_keys.sql | docker exec -i monolith-template-postgres-1 psql -U test -d test_db || true
-          fi
-          # wait a bit for other services
-          sleep 5
-          # run the small admin UI e2e and datastore checks using DB-backed api keys
-          USE_DB_KEYS=1 poetry run pytest -q tests/test_admin_ui_e2e.py -q
 
       - name: Tear down test services
+        if: always()
         uses: docker/compose-action@v2
         with:
           files: docker-compose.test.yml

@@ -32,6 +32,9 @@ jobs:
             fi
             sleep 1
           done
+      - name: Ensure app up
+        run: |
+          curl -sSf http://127.0.0.1:8000/health
       - name: Run smoke script
         run: |
           cd monolith-template
