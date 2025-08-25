@@ -19,7 +19,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install fastapi uvicorn[standard] requests
       - name: Start test services (docker compose action)
-        uses: docker/compose-action@v2
+        uses: docker/compose-action@v3
         with:
           files: monolith-template/docker-compose.test.yml
           args: up -d
@@ -57,7 +57,7 @@ jobs:
 
       - name: Tear down test services
         if: always()
-        uses: docker/compose-action@v2
+        uses: docker/compose-action@v3
         with:
           files: monolith-template/docker-compose.test.yml
           args: down
