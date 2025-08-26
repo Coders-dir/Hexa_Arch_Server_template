@@ -30,10 +30,7 @@ jobs:
         env:
           RUN_INTEGRATION: '1'
         run: |
-          if [ -d monolith-template ]; then
-            cd monolith-template
-            PYTHONPATH="$PWD" poetry run pytest tests/integration -q
-          elif [ -d service-template ]; then
+          if [ -d service-template ]; then
             cd service-template
             PYTHONPATH="$PWD" poetry run pytest tests/integration -q
           else

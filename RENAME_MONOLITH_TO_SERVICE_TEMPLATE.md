@@ -1,13 +1,13 @@
 Rename plan
 ===========
 
-This repository is moving `monolith-template/` to `service-template/` to better reflect multi-service support while enforcing hexagonal architecture.
+This repository has consolidated `monolith-template/` into `service-template/` to better reflect multi-service support while enforcing hexagonal architecture.
 
-Plan executed by automation:
-1. Keep existing `monolith-template/` as-is for now (to preserve history).  
-2. Create `service-template/` README and link to `monolith-template/` while the move completes.  
-3. Future PR will move files and update imports.  
+Plan executed:
+1. Files and documentation were migrated to `service-template/`.
+2. CI and workflow references were updated to use `service-template/`.
+3. Historical migration helpers and notes are archived under `tools/archive/`.
 
 Notes
 -----
-Do not delete `monolith-template/` until all references are updated and CI passes.
+`monolith-template` has been removed from the active tree. If you need the historical layout, consult `tools/archive/` and `HANDOFF_SUMMARY.md`.

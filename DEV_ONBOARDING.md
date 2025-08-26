@@ -50,7 +50,7 @@ kubectl config use-context default --kubeconfig=infra/kubeconfig-sa
 
 Troubleshooting
 - `poetry install` for `service-template` may fail with:
-  - "pyproject.toml changed significantly since poetry.lock was last generated" — fix by running `poetry lock` in `monolith-template` (maintainer task) or regenerate `poetry.lock` from pyproject and commit it.
+  - "pyproject.toml changed significantly since poetry.lock was last generated" — fix by running `poetry lock` in `service-template` (maintainer task) or regenerate `poetry.lock` from pyproject and commit it.
 - If the bootstrap reports `connection refused` when using the generated kubeconfig, ensure the Kind cluster is running (`kind get clusters` and `kubectl cluster-info --context kind-hexa-test`).
 - If Docker is unavailable in your environment, use the fallback manual steps and/or run the templates against a remote test cluster.
 

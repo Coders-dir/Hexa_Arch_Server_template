@@ -36,4 +36,4 @@ See `ROLES.md` and the role YAMLs under `service-template/roles/` for owners and
 
 Migration note
 --------------
-To migrate the existing `monolith-template/` into `service-template/` use `tools/migrate_monolith_to_service_template.sh` from a Codespace. The script performs `git mv` where possible and leaves a safe record for review.
+The repository migration from `monolith-template/` into `service-template/` is complete. Historical migration helpers are archived in `tools/archive/` and `HANDOFF_SUMMARY.md` contains a changelog of the steps performed.

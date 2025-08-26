@@ -18,7 +18,7 @@ Run locally (dev)
 1. Use the workspace venv Python:
 
 ```bash
-cd monolith-template
+cd service-template
 /workspaces/Hexa_Arch_Server_template/.venv/bin/python -m uvicorn src.app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
@@ -34,7 +34,7 @@ Bring up full test stack (Postgres, Mongo, Redis):
 cd monolith-template
 docker compose -f docker-compose.test.yml up -d
 # (Optional) apply DB migrations for api_keys
-cat db/migrations/001_create_api_keys.sql | docker exec -i monolith-template-postgres-1 psql -U test -d test_db
+cat db/migrations/001_create_api_keys.sql | docker exec -i service-template-postgres-1 psql -U test -d test_db
 ```
 
 Smoke checks (quick)
@@ -76,8 +76,8 @@ This repo includes example k8s manifests under `k8s/`. A simple deployment flow:
 3. Apply manifests:
 
 ```bash
-kubectl apply -f monolith-template/k8s/deployment.yaml
-kubectl apply -f monolith-template/k8s/worker-deployment.yaml
+kubectl apply -f service-template/k8s/deployment.yaml
+kubectl apply -f service-template/k8s/worker-deployment.yaml
 ```
 
 Rollback (quick):

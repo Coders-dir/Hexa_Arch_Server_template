@@ -76,9 +76,9 @@ This file is the authoritative handoff produced by the acting-CTO. It documents 
 
 ## Merge readiness (score)
 - Merge SHA: db5786c74078 (final consolidation commit)
-- Action: Branches cleaned and legacy template directories deleted on main.
+- Action: Branches cleaned and legacy template directories (`monolith-template`, `microservices-template`) deleted on `main`.
 
-What remains that *requires human org-level action*: enabling branch protection and replacing CODEOWNERS placeholders with real teams (these actions require GitHub admin rights and cannot be performed from this Codespace session).
+What remains that *requires human org-level action*: enabling branch protection and replacing `.github/CODEOWNERS` placeholders with real teams (these actions require GitHub admin rights and cannot be performed from this Codespace session). Also verify GitHub Actions runs are green on `main` and pin required checks in branch protection.
 
 ---
 

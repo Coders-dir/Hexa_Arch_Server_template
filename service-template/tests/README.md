@@ -22,11 +22,11 @@ Running tests locally
 Preferred quick-run that sets PYTHONPATH and runs tests in this folder:
 
 ```bash
-export PYTHONPATH=$(pwd)/monolith-template
-python -m pytest monolith-template/tests -q
+export PYTHONPATH=$(pwd)/service-template
+python -m pytest service-template/tests -q
 ```
 
-There's also a helper script provided in `monolith-template/tools/run_tests.sh` which sets up the environment and runs enforcement checks.
+There's also a helper script provided in `service-template/tools/run_tests.sh` which sets up the environment and runs enforcement checks.
 
 Integration / full tests
 ------------------------
