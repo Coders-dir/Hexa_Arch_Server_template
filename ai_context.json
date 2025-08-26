@@ -5,8 +5,7 @@
   "features_dir": "service-template/features/",
   "prompt_counter_file": "PROMPT_COUNTER.md",
   "entrypoints": [
-  "monolith-template/src/app/main.py",
-  "monolith-template/README.md",
-  "service-template/README.md"
+    "service-template/src/app/main.py",
+    "service-template/README.md"
   ]
 }

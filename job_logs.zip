@@ -1,0 +1,142 @@
+﻿2025-08-26T16:43:23.1815915Z Current runner version: '2.328.0'
+2025-08-26T16:43:23.1885726Z ##[group]Runner Image Provisioner
+2025-08-26T16:43:23.1887110Z Hosted Compute Agent
+2025-08-26T16:43:23.1888203Z Version: 20250825.382
+2025-08-26T16:43:23.1889195Z Commit: 7109f2abf901479dac39397456e363ac0cca0730
+2025-08-26T16:43:23.1890422Z Build Date: 2025-08-25T22:55:50Z
+2025-08-26T16:43:23.1891466Z ##[endgroup]
+2025-08-26T16:43:23.1892381Z ##[group]Operating System
+2025-08-26T16:43:23.1893469Z Ubuntu
+2025-08-26T16:43:23.1894357Z 24.04.2
+2025-08-26T16:43:23.1895093Z LTS
+2025-08-26T16:43:23.1895971Z ##[endgroup]
+2025-08-26T16:43:23.1896794Z ##[group]Runner Image
+2025-08-26T16:43:23.1897748Z Image: ubuntu-24.04
+2025-08-26T16:43:23.1898772Z Version: 20250818.1.0
+2025-08-26T16:43:23.1900709Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250818.1/images/ubuntu/Ubuntu2404-Readme.md
+2025-08-26T16:43:23.1903469Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250818.1
+2025-08-26T16:43:23.1905298Z ##[endgroup]
+2025-08-26T16:43:23.1907188Z ##[group]GITHUB_TOKEN Permissions
+2025-08-26T16:43:23.1910308Z Contents: read
+2025-08-26T16:43:23.1911218Z Metadata: read
+2025-08-26T16:43:23.1912029Z Packages: read
+2025-08-26T16:43:23.1913038Z ##[endgroup]
+2025-08-26T16:43:23.1916006Z Secret source: Actions
+2025-08-26T16:43:23.1916991Z Prepare workflow directory
+2025-08-26T16:43:23.2496239Z Prepare all required actions
+2025-08-26T16:43:23.2553680Z Getting action download info
+2025-08-26T16:43:23.6991098Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+2025-08-26T16:43:23.8369738Z Complete job name: spec-validate
+2025-08-26T16:43:23.9177858Z ##[group]Run actions/checkout@v4
+2025-08-26T16:43:23.9179123Z with:
+2025-08-26T16:43:23.9179601Z   repository: Coders-dir/Hexa_Arch_Server_template
+2025-08-26T16:43:23.9180338Z   token: ***
+2025-08-26T16:43:23.9180715Z   ssh-strict: true
+2025-08-26T16:43:23.9181102Z   ssh-user: git
+2025-08-26T16:43:23.9181486Z   persist-credentials: true
+2025-08-26T16:43:23.9181947Z   clean: true
+2025-08-26T16:43:23.9182337Z   sparse-checkout-cone-mode: true
+2025-08-26T16:43:23.9182804Z   fetch-depth: 1
+2025-08-26T16:43:23.9183175Z   fetch-tags: false
+2025-08-26T16:43:23.9183561Z   show-progress: true
+2025-08-26T16:43:23.9183942Z   lfs: false
+2025-08-26T16:43:23.9184297Z   submodules: false
+2025-08-26T16:43:23.9184684Z   set-safe-directory: true
+2025-08-26T16:43:23.9185327Z ##[endgroup]
+2025-08-26T16:43:24.0310592Z Syncing repository: Coders-dir/Hexa_Arch_Server_template
+2025-08-26T16:43:24.0314069Z ##[group]Getting Git version info
+2025-08-26T16:43:24.0315475Z Working directory is '/home/runner/work/Hexa_Arch_Server_template/Hexa_Arch_Server_template'
+2025-08-26T16:43:24.0316943Z [command]/usr/bin/git version
+2025-08-26T16:43:24.0371852Z git version 2.51.0
+2025-08-26T16:43:24.0402974Z ##[endgroup]
+2025-08-26T16:43:24.0421711Z Temporarily overriding HOME='/home/runner/work/_temp/d313c1ec-9e83-4bed-b0d6-9ca650839f2f' before making global git config changes
+2025-08-26T16:43:24.0424362Z Adding repository directory to the temporary git global config as a safe directory
+2025-08-26T16:43:24.0427605Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Hexa_Arch_Server_template/Hexa_Arch_Server_template
+2025-08-26T16:43:24.0461660Z Deleting the contents of '/home/runner/work/Hexa_Arch_Server_template/Hexa_Arch_Server_template'
+2025-08-26T16:43:24.0466375Z ##[group]Initializing the repository
+2025-08-26T16:43:24.0471356Z [command]/usr/bin/git init /home/runner/work/Hexa_Arch_Server_template/Hexa_Arch_Server_template
+2025-08-26T16:43:24.0533991Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-08-26T16:43:24.0535728Z hint: is subject to change. To configure the initial branch name to use in all
+2025-08-26T16:43:24.0539033Z hint: of your new repositories, which will suppress this warning, call:
+2025-08-26T16:43:24.0541871Z hint:
+2025-08-26T16:43:24.0542693Z hint: 	git config --global init.defaultBranch <name>
+2025-08-26T16:43:24.0544158Z hint:
+2025-08-26T16:43:24.0545394Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-08-26T16:43:24.0547018Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-08-26T16:43:24.0549354Z hint:
+2025-08-26T16:43:24.0550041Z hint: 	git branch -m <name>
+2025-08-26T16:43:24.0550769Z hint:
+2025-08-26T16:43:24.0551708Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-08-26T16:43:24.0553578Z Initialized empty Git repository in /home/runner/work/Hexa_Arch_Server_template/Hexa_Arch_Server_template/.git/
+2025-08-26T16:43:24.0557544Z [command]/usr/bin/git remote add origin https://github.com/Coders-dir/Hexa_Arch_Server_template
+2025-08-26T16:43:24.0588438Z ##[endgroup]
+2025-08-26T16:43:24.0590459Z ##[group]Disabling automatic garbage collection
+2025-08-26T16:43:24.0592035Z [command]/usr/bin/git config --local gc.auto 0
+2025-08-26T16:43:24.0628397Z ##[endgroup]
+2025-08-26T16:43:24.0630941Z ##[group]Setting up auth
+2025-08-26T16:43:24.0633263Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-08-26T16:43:24.0666906Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-08-26T16:43:24.0946640Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-08-26T16:43:24.0974764Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-08-26T16:43:24.1206329Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-08-26T16:43:24.1242729Z ##[endgroup]
+2025-08-26T16:43:24.1245670Z ##[group]Fetching the repository
+2025-08-26T16:43:24.1253194Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ea7c2d548d2e99db8b22501b8dd3b91663d98347:refs/remotes/pull/6/merge
+2025-08-26T16:43:24.6998536Z From https://github.com/Coders-dir/Hexa_Arch_Server_template
+2025-08-26T16:43:24.7178712Z  * [new ref]         ea7c2d548d2e99db8b22501b8dd3b91663d98347 -> pull/6/merge
+2025-08-26T16:43:24.7186281Z ##[endgroup]
+2025-08-26T16:43:24.7189411Z ##[group]Determining the checkout info
+2025-08-26T16:43:24.7192734Z ##[endgroup]
+2025-08-26T16:43:24.7195513Z [command]/usr/bin/git sparse-checkout disable
+2025-08-26T16:43:24.7201494Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-08-26T16:43:24.7204557Z ##[group]Checking out the ref
+2025-08-26T16:43:24.7205903Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/6/merge
+2025-08-26T16:43:24.7324875Z Note: switching to 'refs/remotes/pull/6/merge'.
+2025-08-26T16:43:24.7327292Z 
+2025-08-26T16:43:24.7328309Z You are in 'detached HEAD' state. You can look around, make experimental
+2025-08-26T16:43:24.7330053Z changes and commit them, and you can discard any commits you make in this
+2025-08-26T16:43:24.7331815Z state without impacting any branches by switching back to a branch.
+2025-08-26T16:43:24.7332814Z 
+2025-08-26T16:43:24.7333434Z If you want to create a new branch to retain commits you create, you may
+2025-08-26T16:43:24.7334865Z do so (now or later) by using -c with the switch command. Example:
+2025-08-26T16:43:24.7335745Z 
+2025-08-26T16:43:24.7336096Z   git switch -c <new-branch-name>
+2025-08-26T16:43:24.7336712Z 
+2025-08-26T16:43:24.7337067Z Or undo this operation with:
+2025-08-26T16:43:24.7337640Z 
+2025-08-26T16:43:24.7338181Z   git switch -
+2025-08-26T16:43:24.7338682Z 
+2025-08-26T16:43:24.7339418Z Turn off this advice by setting config variable advice.detachedHead to false
+2025-08-26T16:43:24.7340523Z 
+2025-08-26T16:43:24.7341763Z HEAD is now at ea7c2d5 Merge b164d4af20a7bfe5bec3dbfefb375a32804d313b into 42f4de6cc087ff2988fe41d0d7cd6c1996583259
+2025-08-26T16:43:24.7347043Z ##[endgroup]
+2025-08-26T16:43:24.7379382Z [command]/usr/bin/git log -1 --format=%H
+2025-08-26T16:43:24.7402756Z ea7c2d548d2e99db8b22501b8dd3b91663d98347
+2025-08-26T16:43:24.7603890Z ##[group]Run python3 tools/requirement_validator.py
+2025-08-26T16:43:24.7604710Z [36;1mpython3 tools/requirement_validator.py[0m
+2025-08-26T16:43:24.7680302Z shell: /usr/bin/bash -e {0}
+2025-08-26T16:43:24.7680845Z ##[endgroup]
+2025-08-26T16:43:24.8214383Z All requirement YAML files validated
+2025-08-26T16:43:24.8309276Z ##[group]Run cd service-template || exit 1
+2025-08-26T16:43:24.8310549Z [36;1mcd service-template || exit 1[0m
+2025-08-26T16:43:24.8311680Z [36;1mif [ -f pyproject.toml ]; then[0m
+2025-08-26T16:43:24.8312828Z [36;1m  poetry install --no-interaction[0m
+2025-08-26T16:43:24.8313968Z [36;1m  poetry run pytest -q[0m
+2025-08-26T16:43:24.8314925Z [36;1mfi[0m
+2025-08-26T16:43:24.8376122Z shell: /usr/bin/bash -e {0}
+2025-08-26T16:43:24.8377076Z ##[endgroup]
+2025-08-26T16:43:24.8488185Z /home/runner/work/_temp/6638fe18-fd42-47d8-a4f7-c7eb8142f198.sh: line 3: poetry: command not found
+2025-08-26T16:43:24.8508270Z ##[error]Process completed with exit code 127.
+2025-08-26T16:43:24.8734242Z Post job cleanup.
+2025-08-26T16:43:24.9788894Z [command]/usr/bin/git version
+2025-08-26T16:43:24.9839132Z git version 2.51.0
+2025-08-26T16:43:24.9884713Z Temporarily overriding HOME='/home/runner/work/_temp/40b03759-c816-4e64-95ee-a52d61c485f3' before making global git config changes
+2025-08-26T16:43:24.9888734Z Adding repository directory to the temporary git global config as a safe directory
+2025-08-26T16:43:24.9892765Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Hexa_Arch_Server_template/Hexa_Arch_Server_template
+2025-08-26T16:43:24.9929744Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-08-26T16:43:24.9965439Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-08-26T16:43:25.0201307Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-08-26T16:43:25.0224263Z http.https://github.com/.extraheader
+2025-08-26T16:43:25.0238782Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-08-26T16:43:25.0287513Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-08-26T16:43:25.0624760Z Cleaning up orphan processes
