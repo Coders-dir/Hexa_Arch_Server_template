@@ -1,21 +1,22 @@
-# Role-based owners for repository areas. Replace placeholders with real GitHub usernames or teams.
+# Role-based owners for repository areas (conservative defaults).
+# Update these to actual GitHub teams/users in your org before enabling branch protection.
 
 # System design and architecture
-service-template/roles/ @system-design @architect
+service-template/roles/ @Coders-dir/system-design @Coders-dir/architects
 
 # Owners for adapters and core code (Architect)
-service-template/src/app/adapters/ @architect
+service-template/src/app/adapters/ @Coders-dir/architects
 
 # Owners for outbound adapters and infra-impacting code (Architect & DevOps)
-service-template/src/app/adapters/outbound/ @architect @devops
+service-template/src/app/adapters/outbound/ @Coders-dir/architects @Coders-dir/devops
 
 # DevOps owners for infra and k8s manifests
-infra/ @devops
-infra/k8s/ @devops
+infra/ @Coders-dir/devops
+infra/k8s/ @Coders-dir/devops
 
 # Security owners for secrets and sensitive files
-infra/secrets/ @security
-secrets/ @security
+infra/secrets/ @Coders-dir/security
+secrets/ @Coders-dir/security
 
 # API owner for controller / API changes
-service-template/src/app/adapters/inbound/ @api-owner
+service-template/src/app/adapters/inbound/ @Coders-dir/api-owners

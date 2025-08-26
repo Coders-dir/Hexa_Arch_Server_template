@@ -16,3 +16,48 @@ All code in this folder follows hexagonal architecture: adapters (inbound/outbou
 Migration note
 --------------
 The full template contents currently live in `monolith-template/`. A future PR will migrate and reconcile files into this folder; for now use `monolith-template/` as the canonical source for template contents.
+
+Monolith template summary (merged)
+---------------------------------
+This template is a production-ready modular monolith example using FastAPI and the Hexagonal (Ports & Adapters) pattern. It includes:
+
+- FastAPI app skeleton and example `user` module.
+- Dockerfile + `docker-compose` for local dev.
+- GitHub Actions CI and CD skeletons.
+- Kubernetes manifests and `infra` helpers.
+- Enforcement tools: `tools/arch_check.py`, `tools/generate_openapi.py`, `tools/contract_check.py`, and `tools/lockfile_check.py`.
+
+Quick local commands
+--------------------
+- Copy env example:
+
+```bash
+cp .env.example .env
+# edit .env
+```
+
+- Start local dev stack (if Docker available):
+
+```bash
+docker compose up --build
+```
+
+- Run enforcement checks and tests (Codespaces-friendly):
+
+```bash
+export PYTHONPATH=$(pwd)/service-template
+bash service-template/tools/run_tests.sh
+```
+
+Where to find enforcement tools
+--------------------------------
+- `service-template/tools/arch_check.py` — architecture import rules enforcement
+- `service-template/tools/generate_openapi.py` — generates OpenAPI
+- `service-template/tools/contract_check.py` — compares generated OpenAPI to `contracts/expected_openapi.json`
+- `service-template/tools/lockfile_check.py` — lockfile enforcement helper
+
+Operational notes
+-----------------
+- For heavy integration tests and canary deploys use CI or a dedicated test cluster; Codespaces may not provide Docker or kind by default.
+- Protect `main` with branch protection rules and require CODEOWNERS approvals for sensitive paths.
+

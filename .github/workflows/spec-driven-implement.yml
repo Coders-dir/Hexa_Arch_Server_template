@@ -11,14 +11,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate requirement metadata
         run: |
-          python3 tools/requirement_validator.py || exit 1
+          python3 tools/requirement_validator.py
       - name: Run tests
         run: |
-          cd service-template || true
+          cd service-template || exit 1
           if [ -f pyproject.toml ]; then
-            poetry install --no-interaction || true
-            poetry run pytest -q || true
+            poetry install --no-interaction
+            poetry run pytest -q
           fi
-      - name: Lockfile check (non-blocking)
+      - name: Lockfile check
         run: |
-          python3 tools/lockfile_check.py || true
+          python3 tools/lockfile_check.py
