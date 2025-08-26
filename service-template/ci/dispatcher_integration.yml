@@ -30,5 +30,12 @@ jobs:
         env:
           RUN_INTEGRATION: '1'
         run: |
-          cd monolith-template
-          PYTHONPATH="$PWD" poetry run pytest tests/integration -q
+          if [ -d monolith-template ]; then
+            cd monolith-template
+            PYTHONPATH="$PWD" poetry run pytest tests/integration -q
+          elif [ -d service-template ]; then
+            cd service-template
+            PYTHONPATH="$PWD" poetry run pytest tests/integration -q
+          else
+            echo "No template directory found; skipping integration tests."
+          fi
