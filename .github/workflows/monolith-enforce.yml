@@ -1,4 +1,4 @@
-name: Monolith enforcement
+name: Template enforcement
 
 on:
   pull_request:

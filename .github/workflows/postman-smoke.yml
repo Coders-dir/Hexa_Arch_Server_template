@@ -27,18 +27,19 @@ jobs:
           cd service-template
           poetry config virtualenvs.create false
           poetry install --no-interaction || true
-      - name: Start test services (bring up docker-compose.test.yml)
+      - name: Start test services (docker compose)
         run: |
           set -euo pipefail
           cd service-template
-          COMPOSE_FILE=docker-compose.test.yml
+          COMPOSE_FILE=docker-compose.yml
           if ! command -v docker >/dev/null 2>&1; then
             echo "docker not found in runner; skipping docker-dependent smoke tests (non-fatal)."
             exit 0
           fi
-          docker compose -f "$COMPOSE_FILE" up -d
+          # start app + deps using compose (uses service-template/docker-compose.yml)
+          docker compose -f "$COMPOSE_FILE" up -d --build
 
-      - name: Wait for services
+      - name: Wait for services & app
         run: |
           # wait for Postgres
           for i in {1..30}; do docker exec service-template-postgres-1 pg_isready -U test && break || sleep 1; done
@@ -46,25 +47,22 @@ jobs:
           for i in {1..30}; do docker exec service-template-redis-1 redis-cli ping && break || sleep 1; done
           # wait for mongo
           for i in {1..30}; do docker exec service-template-mongo-1 mongosh --eval 'db.runCommand({ping:1})' && break || sleep 1; done
-
-      - name: Start app
-        run: |
-          if ! command -v docker >/dev/null 2>&1; then
-            echo "Skipping app start because docker is unavailable in runner; smoke test skipped.";
-            exit 0
-          fi
-          cd service-template
-          export PYTHONPATH=$PWD
-          nohup poetry run uvicorn src.app.main:app --host 0.0.0.0 --port 8000 &
+          # wait for app to respond on localhost:8000 (compose maps port)
           for i in {1..60}; do
             if curl -sSf http://127.0.0.1:8000/health >/dev/null 2>&1; then
               echo "app healthy"
               break
             fi
+            echo "waiting for app... $i"
             sleep 2
           done
+
       - name: Ensure app up
         run: |
+          if ! command -v docker >/dev/null 2>&1; then
+            echo "docker not available; skipping app health check.";
+            exit 0
+          fi
           curl -sSf http://127.0.0.1:8000/health
       - name: Run smoke script
         run: |

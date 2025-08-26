@@ -1,4 +1,4 @@
-name: Monolith CI
+name: Template CI
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test-monolith:
+  template-ci:
     runs-on: ubuntu-latest
     services: {}
     steps:
@@ -17,11 +17,11 @@ jobs:
             echo "service-template not present; skipping monolith tests (non-fatal)."
             exit 0
           fi
-      - name: Start test services (bring up docker-compose.test.yml)
+    - name: Start test services (docker compose)
         run: |
           set -euo pipefail
           cd service-template
-          COMPOSE_FILE=docker-compose.test.yml
+      COMPOSE_FILE=docker-compose.yml
           if ! command -v docker >/dev/null 2>&1; then
             echo "docker not found in runner; skipping docker-dependent monolith tests (non-fatal)."
             exit 0
@@ -69,12 +69,12 @@ jobs:
           cd service-template
           poetry run pytest -q
 
-      - name: Tear down test services
+    - name: Tear down test services
         if: always()
         run: |
           set -euo pipefail
           cd service-template
-          COMPOSE_FILE=docker-compose.test.yml
+      COMPOSE_FILE=docker-compose.yml
           if command -v docker >/dev/null 2>&1; then
             docker compose -f "$COMPOSE_FILE" down || true
           fi
