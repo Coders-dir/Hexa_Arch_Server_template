@@ -6,14 +6,14 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 export PYTHONPATH="$ROOT"
 
 echo "Running direct policy pytest wrappers..."
-python -m pytest -q "$ROOT/monolith-template/tests/test_api_contracts_pytest.py" \
-  "$ROOT/monolith-template/tests/test_architecture_pytest.py" \
-  "$ROOT/monolith-template/tests/test_lockfile_pytest.py"
+python -m pytest -q "$ROOT/tests/test_api_contracts_pytest.py" \
+  "$ROOT/tests/test_architecture_pytest.py" \
+  "$ROOT/tests/test_lockfile_pytest.py"
 
 echo "Generating OpenAPI..."
-python "$ROOT/monolith-template/tools/generate_openapi.py"
+python "$ROOT/tools/generate_openapi.py"
 
 echo "Running contract check..."
-python "$ROOT/monolith-template/tools/contract_check.py"
+python "$ROOT/tools/contract_check.py"
 
 echo "All policy checks completed successfully."
