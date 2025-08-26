@@ -10,6 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Skip if monolith template removed
+        run: |
+          if [ ! -d monolith-template ]; then
+            echo "monolith-template not present; skipping postman smoke tests (non-fatal)."
+            exit 0
+          fi
       - name: Set up Python
         uses: actions/setup-python@v4
         with:

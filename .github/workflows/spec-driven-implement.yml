@@ -9,6 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Ensure Python and Poetry available
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Poetry
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install poetry
       - name: Validate requirement metadata
         run: |
           python3 tools/requirement_validator.py
@@ -16,9 +24,11 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/service-template
         run: |
+          if [ ! -d service-template ]; then
+            echo "service-template not present; skipping spec tests."
+            exit 0
+          fi
           cd service-template || exit 1
-          python -m pip install --upgrade pip
-          python -m pip install poetry
           poetry config virtualenvs.create false
           poetry install --no-interaction
           # Run full tests; if they fail in hosted runner, fall back to running unit-only tests

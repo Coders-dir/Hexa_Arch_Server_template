@@ -11,6 +11,12 @@ jobs:
     services: {}
     steps:
       - uses: actions/checkout@v4
+      - name: Skip if monolith template removed
+        run: |
+          if [ ! -d monolith-template ]; then
+            echo "monolith-template not present; skipping monolith tests (non-fatal)."
+            exit 0
+          fi
       - name: Start test services (bring up docker-compose.test.yml)
         run: |
           set -euo pipefail

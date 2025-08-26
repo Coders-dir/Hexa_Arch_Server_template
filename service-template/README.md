@@ -15,7 +15,7 @@ All code in this folder follows hexagonal architecture: adapters (inbound/outbou
 
 Migration note
 --------------
-The full template contents currently live in `monolith-template/`. A future PR will migrate and reconcile files into this folder; for now use `monolith-template/` as the canonical source for template contents.
+This folder is the canonical template. Legacy `monolith-template/` and `microservices-template/` directories have been consolidated into `service-template/` as part of the repository reorganization.
 
 Monolith template summary (merged)
 ---------------------------------
