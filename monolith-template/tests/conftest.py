@@ -33,6 +33,27 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(skip_marker)
 
 
+# Provide fake Redis in this environment unless full tests requested
+if SKIP_INTEGRATION:
+    try:
+        from tests.fake_redis import get_fake_client
+        import redis
+        import types
+
+        # Patch synchronous client
+        redis.Redis = lambda *a, **k: get_fake_client(False, *a, **k)
+
+        # Patch asyncio client
+        if hasattr(redis, "asyncio"):
+            redis.asyncio.Redis = lambda *a, **k: get_fake_client(True, *a, **k)
+        else:
+            # create a fake asyncio namespace
+            redis.asyncio = types.SimpleNamespace(Redis=lambda *a, **k: get_fake_client(True, *a, **k))
+    except Exception:
+        # if fake import fails, let tests fail normally
+        pass
+
+
 def _run_compose_up(compose_file: str):
     cmd = ["docker-compose", "-f", compose_file, "up", "-d"]
     subprocess.check_call(cmd)
