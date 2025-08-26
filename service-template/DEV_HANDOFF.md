@@ -9,7 +9,7 @@ Quick local run (dev container / codespace)
 1. Start the test services used by integration tests:
 
 ```bash
-cd monolith-template
+cd service-template
 docker-compose -f docker-compose.test.yml up -d
 ```
 

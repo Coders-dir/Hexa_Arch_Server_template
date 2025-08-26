@@ -53,7 +53,7 @@ Short talking points to explain to colleagues
 
 5-minute demo script (presenter notes)
 ------------------------------------
-1. Show the file tree for `monolith-template` (point at `src/app`, `db/migrations`, `docker-compose.test.yml`).
+1. Show the file tree for `service-template` (point at `src/app`, `db/migrations`, `docker-compose.test.yml`).
 2. Run the quick demo commands above and show tests passing.
 3. Open `src/app/adapters/outbound/api_key_repo.py` and explain: "this is the safe for API keys; it retries the DB pool on startup so services don't cascade-fail during restarts." 
 4. Show `tests/test_priority_queue.py` to illustrate the priority queue behavior (optional).

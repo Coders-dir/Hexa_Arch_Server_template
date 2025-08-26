@@ -22,7 +22,7 @@ How to reproduce locally
 1. Start services:
 
 ```bash
-cd monolith-template
+cd service-template
 docker-compose -f docker-compose.test.yml up -d
 ```
 

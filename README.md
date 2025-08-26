@@ -1,12 +1,10 @@
 Hexa Architecture Server Template
 
-This repository contains two ready-to-copy templates:
+This repository contains a canonical service template:
 
-- `monolith-template/` - Modular Monolith using FastAPI and Hexagonal architecture
-- `microservices-template/` - Mono-repo layout with multiple services (each a hexagonal FastAPI service)
+- `service-template/` - Hexagonal FastAPI service template suitable for single-service or monolith-style projects.
 
-Pick the template that best suits your project and copy it into a new repository or adapt.
+Pick the `service-template/` to scaffold a fresh project and adapt it for your use.
 
 Next steps:
-- To scaffold a fresh project from the monolith template, copy the `monolith-template/` folder into a new repo and replace names.
-- To start developing a service from the microservices template, cd into `microservices-template/services/<service-name>` and follow its README.
+- To scaffold a new project, copy the `service-template/` folder into a new repository and replace names.

@@ -10,7 +10,7 @@ Commands (copy/paste)
 Start local test stack and run tests:
 
 ```bash
-cd monolith-template
+cd service-template
 docker-compose -f docker-compose.test.yml up -d
 export RUN_INTEGRATION=1
 poetry install --no-interaction
