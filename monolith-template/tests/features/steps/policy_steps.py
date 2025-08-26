@@ -74,8 +74,9 @@ def assert_contract_ok():
 
 
 @given("a PR modifies API controller files")
-def pr_modifies_controllers():
-    # In CI this would inspect the PR diff; locally assume true so the scenario runs
+def step_pr_modifies_api_controllers():
+    # In CI this would inspect PR diffs; for local tests mark the PR-modified flag
+    os.environ['PR_MODIFIES_API_CONTROLLERS'] = '1'
     return True
 
 
