@@ -1,3 +1,8 @@
+NOTICE: This monolith template content has been migrated to `service-template/README.md`.
+Please prefer `service-template/README.md` for the canonical documentation. This file is kept as an archive and compatibility layer during migration.
+
+````markdown
+Monolithic Hexagonal Template (FastAPI)
 Monolithic Hexagonal Template (FastAPI)
 
 Overview
