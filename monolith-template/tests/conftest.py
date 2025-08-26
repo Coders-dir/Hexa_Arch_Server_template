@@ -11,6 +11,27 @@ import time  # noqa: E402
 
 import pytest  # noqa: E402
 
+# By default skip integration/acceptance tests that require external services unless explicitly enabled
+SKIP_INTEGRATION = os.getenv("RUN_FULL_TESTS", "0") != "1"
+
+
+def pytest_collection_modifyitems(config, items):
+    if not SKIP_INTEGRATION:
+        return
+
+    skip_marker = pytest.mark.skip(reason="Integration tests skipped in this environment (set RUN_FULL_TESTS=1 to run)")
+    for item in items:
+        path = str(item.fspath)
+        if (
+            "/tests/integration/" in path
+            or "test_admin_ui_e2e.py" in path
+            or "test_worker_acceptance.py" in path
+            or "test_worker_" in path
+            or "test_metrics.py" in path
+            or "tests/features/" in path
+        ):
+            item.add_marker(skip_marker)
+
 
 def _run_compose_up(compose_file: str):
     cmd = ["docker-compose", "-f", compose_file, "up", "-d"]
