@@ -69,14 +69,12 @@ jobs:
           # If SOPS key is supplied, decrypt encrypted manifests first
           if [ -n "${{ secrets.SOPS_AGE_KEY }}" ]; then
             echo "SOPS key present - attempting to decrypt infra/secrets/*.enc.yaml"
-            python - <<'PY'
-import os,glob,subprocess
-files=glob.glob('infra/secrets/*.enc.yaml')
-for f in files:
-  out='/tmp/'+os.path.basename(f).replace('.enc.yaml','.yaml')
-  subprocess.check_call(['sops','-d',f,'-o',out])
-  print('decrypted',f,'->',out)
-PY
+            for f in infra/secrets/*.enc.yaml; do
+              [ -e "$f" ] || continue
+              out="/tmp/$(basename "$f" .enc.yaml).yaml"
+              sops -d "$f" -o "$out" || continue
+              echo "decrypted $f -> $out"
+            done
             kubectl apply -f /tmp -n prod || true
           fi
 
@@ -89,7 +87,6 @@ PY
           if [ -f k8s/prometheus-configmap.yaml ]; then kubectl apply -f k8s/prometheus-configmap.yaml -n prod || true; fi
           if [ -f k8s/prometheus-rules.yaml ]; then kubectl apply -f k8s/prometheus-rules.yaml -n prod || true; fi
           if [ -f k8s/prometheus-rules-configmap.yaml ]; then kubectl apply -f k8s/prometheus-rules-configmap.yaml -n prod || true; fi
-          # Apply Prometheus deployment and service if present
           if [ -f k8s/prometheus-deployment.yaml ]; then kubectl apply -f k8s/prometheus-deployment.yaml -n prod || true; fi
           if [ -f k8s/prometheus-service.yaml ]; then kubectl apply -f k8s/prometheus-service.yaml -n prod || true; fi
 

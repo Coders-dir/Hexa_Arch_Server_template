@@ -1,0 +1,12 @@
+{
+  "project_summary_file": "PROJECT_CONTEXT.md",
+  "roles_dir": "service-template/roles/",
+  "requirements_manifest": "requirements-manifest.json",
+  "features_dir": "service-template/features/",
+  "prompt_counter_file": "PROMPT_COUNTER.md",
+  "entrypoints": [
+  "monolith-template/src/app/main.py",
+  "monolith-template/README.md",
+  "service-template/README.md"
+  ]
+}

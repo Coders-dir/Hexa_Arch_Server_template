@@ -1,0 +1,7 @@
+id: SD-001
+title: System Design - Capacity and topology guidance
+owner: "@system-design"
+risk_level: medium
+sensitive_flags: true
+acceptance_gherkin:
+  - "Feature: System capacity guidance\n    Scenario: Provide capacity notes for new services\n      Given a new service requirement\n      When the system design role reviews the requirement\n      Then the capacity and topology guidance must be recorded"

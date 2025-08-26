@@ -1,0 +1,7 @@
+# CODEOWNERS for monolith-template
+# Architect approves architecture and layering changes
+/src/** @architect-team
+/tools/** @architect-team
+# DevOps approves infra and CI
+/infra/** @devops-team
+/.github/workflows/** @devops-team

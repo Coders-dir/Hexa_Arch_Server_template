@@ -1,1 +1,0 @@
-# outbound db adapters package

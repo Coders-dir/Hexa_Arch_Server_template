@@ -1,0 +1,8 @@
+id: ARCH-001
+title: Enforce hexagonal import direction
+owner: "@architect"
+risk_level: high
+sensitive_flags: false
+acceptance_gherkin:
+  - "Feature: Architectural dependency direction\n    Scenario: No adapter imports into domain or usecase layers\n      Given the repository Python files\n      When the architecture enforcement check is executed\n      Then zero import violations must be reported"
+

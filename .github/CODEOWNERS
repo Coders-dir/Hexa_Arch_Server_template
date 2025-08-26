@@ -1,0 +1,22 @@
+# Role-based owners for repository areas (conservative defaults).
+# Update these to actual GitHub teams/users in your org before enabling branch protection.
+
+# System design and architecture
+service-template/roles/ @Coders-dir/system-design @Coders-dir/architecture
+
+# Owners for adapters and core code (Architect)
+service-template/src/app/adapters/ @Coders-dir/architecture
+
+# Owners for outbound adapters and infra-impacting code (Architect & DevOps)
+service-template/src/app/adapters/outbound/ @Coders-dir/architecture @Coders-dir/devops
+
+# DevOps owners for infra and k8s manifests
+infra/ @Coders-dir/devops
+infra/k8s/ @Coders-dir/devops
+
+# Security owners for secrets and sensitive files
+infra/secrets/ @Coders-dir/security
+secrets/ @Coders-dir/security
+
+# API owner for controller / API changes
+service-template/src/app/adapters/inbound/ @Coders-dir/api

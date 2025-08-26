@@ -1,0 +1,7 @@
+id: API-001
+title: API Owner - Contract change process
+owner: "@api-owner"
+risk_level: high
+sensitive_flags: true
+acceptance_gherkin:
+  - "Feature: API contract ownership\n    Scenario: OpenAPI exists and is valid after API changes\n      Given a PR modifies API controller files\n      When OpenAPI generation is executed\n      Then OpenAPI must be valid JSON"
