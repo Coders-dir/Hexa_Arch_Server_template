@@ -1,0 +1,21 @@
+# Role-based owners for repository areas. Replace placeholders with real GitHub usernames or teams.
+
+# System design and architecture
+service-template/roles/ @system-design @architect
+
+# Owners for adapters and core code (Architect)
+service-template/src/app/adapters/ @architect
+
+# Owners for outbound adapters and infra-impacting code (Architect & DevOps)
+service-template/src/app/adapters/outbound/ @architect @devops
+
+# DevOps owners for infra and k8s manifests
+infra/ @devops
+infra/k8s/ @devops
+
+# Security owners for secrets and sensitive files
+infra/secrets/ @security
+secrets/ @security
+
+# API owner for controller / API changes
+service-template/src/app/adapters/inbound/ @api-owner

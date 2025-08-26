@@ -1,0 +1,7 @@
+id: DEVOPS-001
+title: DevOps - reproducible builds and CI checks
+owner: "@devops"
+risk_level: medium
+sensitive_flags: false
+acceptance_gherkin:
+  - "Feature: Lockfile consistency\n    Scenario: pyproject changed but lockfile not updated\n      Given a PR changes `pyproject.toml`\n      When CI lockfile-check runs\n      Then the check must fail if `poetry.lock` was not regenerated"

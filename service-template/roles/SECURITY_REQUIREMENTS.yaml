@@ -1,0 +1,7 @@
+id: SEC-001
+title: Security - secret handling and RBAC defaults
+owner: "@security"
+risk_level: high
+sensitive_flags: true
+acceptance_gherkin:
+  - "Feature: Secrets handling\n    Scenario: Secrets not committed to repo\n      Given repo changes in infra or secrets paths\n      When CI runs secrets check\n      Then the check must fail if any secret-like file is detected"

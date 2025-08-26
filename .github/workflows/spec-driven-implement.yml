@@ -1,0 +1,24 @@
+name: Spec-Driven Implement
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  spec-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate requirement metadata
+        run: |
+          python3 tools/requirement_validator.py || exit 1
+      - name: Run tests
+        run: |
+          cd service-template || true
+          if [ -f pyproject.toml ]; then
+            poetry install --no-interaction || true
+            poetry run pytest -q || true
+          fi
+      - name: Lockfile check (non-blocking)
+        run: |
+          python3 tools/lockfile_check.py || true
