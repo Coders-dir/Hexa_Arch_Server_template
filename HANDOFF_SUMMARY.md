@@ -73,11 +73,10 @@ This file is the authoritative handoff produced by the acting-CTO. It documents 
 - Verified `service-template` tests locally (21 passed, 8 skipped) and fixed failing OpenAPI/contract check by adding shims and copy logic.
 
 ## Final checks I ran
-- Ran `pytest` scoped to `service-template/tests` with `PYTHONPATH=service-template`.
-- Cleaned Python caches (`__pycache__`, `*.pyc`) that caused cross-template test collisions during local runs.
 
 ## Merge readiness (score)
-- Readiness level: 80% — branch is runnable, tests for `service-template` are green locally, and governance artifacts (CODEOWNERS, PR template, CI skeleton, requirement validator) are in place.
+- Merge SHA: db5786c74078 (final consolidation commit)
+- Action: Branches cleaned and legacy template directories deleted on main.
 
 What remains that *requires human org-level action*: enabling branch protection and replacing CODEOWNERS placeholders with real teams (these actions require GitHub admin rights and cannot be performed from this Codespace session).
 
