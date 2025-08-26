@@ -48,6 +48,72 @@ cp .env.example .env
 ```bash
 make up
 ```
+Handoff: what we delivered
+--------------------------
+
+Vision
+~~~~~~
+This template is a production-oriented modular-monolith implementing Hexagonal (Ports & Adapters) principles. The goal is to make business logic independent from framework and infrastructure, enable safe refactors, and add reproducible enforcement so policy (architecture, API contract, dependency lockfile) is measured continuously.
+
+What we implemented
+~~~~~~~~~~~~~~~~~~~
+- Enforcement tooling: AST-based architecture checker (`monolith-template/tools/arch_check.py`) to enforce allowed import boundaries.
+- OpenAPI generation and contract validation: `monolith-template/tools/generate_openapi.py` and `monolith-template/tools/contract_check.py` generate the app OpenAPI and compare it with `contracts/expected_openapi.json`.
+- Lockfile check scaffold: `monolith-template/tools/lockfile_check.py` (CI-friendly script to ensure `poetry.lock` is updated when dependencies change).
+- Stable CI-friendly tests: added direct pytest wrappers under `monolith-template/tests` that run enforcement checks reliably in CI.
+- Local test ergonomics: implemented `tests/fake_redis.py` (an in-memory Redis emulation) and `tests/conftest.py` patches so developers can run the test suite without external services by default.
+- Tests & docs: added focused unit tests for the fake Redis (`tests/test_fake_redis_unit.py`) and a `tests/README.md` documenting how to run tests locally and the fake Redis limitations.
+- Repo hygiene: removed accidental code-fence artifacts in Python/feature files and added compatibility re-exports for adapters during refactors.
+- Automation: `monolith-template/tools/run_tests.sh` (helper) and a lightweight GitHub Actions workflow (`.github/workflows/monolith-enforce.yml`) to run enforcement checks on PRs against `main`.
+
+Why these changes
+~~~~~~~~~~~~~~~~~
+The intent was to make the repository safe to refactor and to provide early, automatic feedback about architectural drift and API/contract regressions. By keeping enforcement checks fast and deterministic (faking external services where appropriate), developer iteration time is reduced and CI shows clear policy pass/fail signals.
+
+How to validate locally (quick)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. Set PYTHONPATH and run the helper (fast):
+
+```bash
+export PYTHONPATH=$(pwd)/monolith-template
+bash monolith-template/tools/run_tests.sh
+```
+
+2. Run full tests (optional):
+
+```bash
+export RUN_FULL_TESTS=1
+python -m pytest monolith-template/tests -q
+```
+
+Files of interest
+~~~~~~~~~~~~~~~~~
+- `monolith-template/tools/arch_check.py`  — architecture import rules enforcement
+- `monolith-template/tools/generate_openapi.py` — generates `src/app/openapi.json`
+- `monolith-template/tools/contract_check.py` — compares generated OpenAPI to `contracts/expected_openapi.json`
+- `monolith-template/tools/lockfile_check.py` — lockfile enforcement helper
+- `monolith-template/tools/run_tests.sh` — wrapper to run enforcement checks and tests consistently
+- `monolith-template/tests/fake_redis.py` — in-memory Redis emulation for local runs
+- `monolith-template/tests/test_fake_redis_unit.py` — unit tests for the fake redis
+- `monolith-template/tests/README.md` — testing docs
+
+Operational notes and next steps
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- CI: the branch `refactor/organize-adapters` contains a PR workflow that runs the enforcement checks on PRs to `main`. Open the PR from that branch to trigger Actions.
+- Expand fakes carefully: the fake Redis covers the commands used by the quota/circuit-breaker helpers; add more behaviours if future tests require them and cover them with unit tests.
+- Move more adapters incrementally: when reorganizing adapters, prefer a re-export stub to avoid breaking imports, run `tools/arch_check.py` and `tools/run_tests.sh` after each small change.
+- Consider placing enforcement rules in a centralized `docs/` or `infra/` folder and creating a `make enforce` target to unify commands.
+
+Where to hand off
+~~~~~~~~~~~~~~~~~
+Assign reviewers that understand Hexagonal architecture and CI (suggested roles: lead engineer, SRE, API owner). Provide the following context to reviewers:
+
+- Goals: ensure adapter refactors are non-breaking and that API contract and architecture rules are continuously validated.
+- How to review: run `tools/run_tests.sh`, inspect `monolith-template/tools/*` scripts, and check `tests/README.md` for local reproduction.
+
+Final notes
+~~~~~~~~~~~
+This handoff focuses on being pragmatic: enforceable tooling, reproducible tests, and low-friction developer experience. If you want, I will continue by opening the PR, triaging CI failures (if any), and proceeding to the next adapter refactor and its tests.
 
 - Run tests:
 
