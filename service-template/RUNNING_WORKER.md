@@ -5,7 +5,7 @@ This project provides a standalone worker entrypoint at `src/app/worker.py` whic
 Local run (uses the same venv as the project):
 
 ```bash
-cd monolith-template
+cd service-template
 export PYTHONPATH=$PWD
 python src/app/worker.py
 ```

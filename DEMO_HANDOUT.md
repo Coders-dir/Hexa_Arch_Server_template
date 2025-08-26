@@ -20,7 +20,7 @@ poetry run pytest -q
 Quick smoke (no tests):
 
 ```bash
-cd monolith-template
+cd service-template
 docker-compose -f docker-compose.test.yml up -d
 poetry run python - <<'PY'
 from src.app.adapters.outbound.api_key_repo import get_metrics

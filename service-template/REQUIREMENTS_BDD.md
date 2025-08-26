@@ -6,7 +6,7 @@ opinionated: the template owns these policies to keep projects consistent, maint
 
 Scope
 -----
-- Applies only to `monolith-template/` (the template) and projects bootstrapped from it.
+ - Applies to `service-template/` (the canonical template) and projects bootstrapped from it. Historical references to `monolith-template` were consolidated.
 - Runs in GitHub Codespaces and CI. Heavy integration policies run in a gated CI job.
 
 How to use

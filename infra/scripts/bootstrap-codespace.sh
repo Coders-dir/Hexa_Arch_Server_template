@@ -38,7 +38,7 @@ if ! command -v poetry >/dev/null 2>&1; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
-for proj in monolith-template microservices-template/services/user-service; do
+for proj in service-template; do
   if [ -f "$proj/pyproject.toml" ]; then
     echo "[bootstrap] installing dependencies for $proj"
     (cd "$proj" && poetry install --no-interaction --no-ansi) || echo "[bootstrap] poetry install failed for $proj"

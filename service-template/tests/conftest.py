@@ -113,7 +113,7 @@ def integration_dbs():
         migrations_dir = os.path.join(os.path.dirname(__file__), "..", "db", "migrations")
         migration_file = os.path.join(migrations_dir, "001_create_api_keys.sql")
         if os.path.exists(migration_file):
-            cmd = f"cat {migration_file} | docker exec -i monolith-template-postgres-1 psql -U test -d test_db"
+            cmd = f"cat {migration_file} | docker exec -i service-template-postgres-1 psql -U test -d test_db"
             subprocess.check_call(cmd, shell=True)
     except Exception as e:
         _run_compose_down(compose_file)

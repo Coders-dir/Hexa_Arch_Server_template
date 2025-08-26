@@ -10,7 +10,7 @@ os.environ["ENV"] = "prod"
 os.environ["ALLOW_PUBLIC_DOCS"] = "0"
 
 try:
-    # Ensure monolith-template root is on sys.path so `src` can be imported
+    # Ensure service-template root is on sys.path so `src` can be imported
     from pathlib import Path
     ROOT = Path(__file__).resolve().parent.parent
     sys.path.insert(0, str(ROOT))

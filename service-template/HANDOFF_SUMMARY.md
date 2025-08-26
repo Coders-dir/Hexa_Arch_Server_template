@@ -6,8 +6,8 @@ This branch contains a small hexagonal-monolith template with a dispatcher/quota
 
 What I changed (delta)
 - `src/app/adapters/outbound/api_key_repo.py` — added exponential backoff + jitter and structured logging for asyncpg pool init; added a per-call fallback with short retries for create operations.
-- `monolith-template/DEV_HANDOFF.md` — quick run instructions to start services and run tests.
-- `monolith-template/.github/workflows/ci-integration.yml` — minimal GitHub Actions job to boot Postgres/Redis/Mongo, apply migrations, and run tests.
+- Historical: `monolith-template/DEV_HANDOFF.md` — quick run instructions moved into `service-template/DEV_HANDOFF.md` during consolidation.
+- Historical: `monolith-template/.github/workflows/ci-integration.yml` — integration job concept migrated into `service-template/ci/dispatcher_integration.yml`.
 
 Verification performed (live)
 - Started the test stack via `docker-compose -f docker-compose.test.yml up -d`.

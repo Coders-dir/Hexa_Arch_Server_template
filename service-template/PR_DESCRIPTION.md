@@ -15,9 +15,9 @@ Key changes
   - `src/app/adapters/inbound/http/controllers/admin/`
 - Added thin re-export stubs at the original paths to preserve compatibility.
 - Added policy enforcement tooling and tests:
-  - `monolith-template/tools/arch_check.py` (AST-based import direction enforcement)
-  - `monolith-template/tools/generate_openapi.py`, `validate_openapi.py`, `contract_check.py`
-  - `monolith-template/tests/test_policies.py` and pytest-bdd step stubs
+  - `service-template/tools/arch_check.py` (AST-based import direction enforcement)
+  - `service-template/tools/generate_openapi.py`, `validate_openapi.py`, `contract_check.py`
+  - `service-template/tests/test_policies.py` and pytest-bdd step stubs
 - Generated baseline OpenAPI contract at `monolith-template/contracts/expected_openapi.json`.
 
 Why
@@ -30,8 +30,8 @@ How to review
 2. Run the policy checks locally:
 
    ```bash
-   python3 monolith-template/tools/arch_check.py
-   pytest -q monolith-template/tests/test_policies.py
+  python3 service-template/tools/arch_check.py
+  pytest -q service-template/tests/test_policies.py
    ```
 
 3. Verify that existing public imports still resolve (the repo includes thin re-export stubs to preserve compatibility).
@@ -47,7 +47,7 @@ Suggested reviewers / roles
 Notes for merging
 -----------------
 - The PR includes CI workflows that will run policy checks; ensure GitHub Actions pass before merging.
-- If the OpenAPI contract changes are intentional, update `monolith-template/contracts/expected_openapi.json` and add an explicit note in the PR body explaining the consumer-facing change.
+ - If the OpenAPI contract changes are intentional, update `service-template/contracts/expected_openapi.json` and add an explicit note in the PR body explaining the consumer-facing change.
 
 How I validated
 ----------------

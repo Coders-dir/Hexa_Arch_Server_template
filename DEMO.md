@@ -23,7 +23,7 @@ poetry run pytest -q
 If you want a faster smoke check (no tests):
 
 ```bash
-cd monolith-template
+cd service-template
 docker-compose -f docker-compose.test.yml up -d
 poetry run python - <<'PY'
 import asyncio, os
