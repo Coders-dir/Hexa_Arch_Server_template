@@ -46,9 +46,15 @@ if SKIP_INTEGRATION:
         # Patch asyncio client
         if hasattr(redis, "asyncio"):
             redis.asyncio.Redis = lambda *a, **k: get_fake_client(True, *a, **k)
+            # Ensure from_url returns an async fake client for modules that call redis.from_url
+            redis.asyncio.from_url = lambda *a, **k: get_fake_client(True, *a, **k)
         else:
             # create a fake asyncio namespace
-            redis.asyncio = types.SimpleNamespace(Redis=lambda *a, **k: get_fake_client(True, *a, **k))
+            redis.asyncio = types.SimpleNamespace(Redis=lambda *a, **k: get_fake_client(True, *a, **k),
+                                                  from_url=lambda *a, **k: get_fake_client(True, *a, **k))
+
+        # Patch top-level from_url as well (some code imports redis.from_url)
+        redis.from_url = lambda *a, **k: get_fake_client(False, *a, **k)
     except Exception:
         # if fake import fails, let tests fail normally
         pass
