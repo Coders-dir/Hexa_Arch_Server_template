@@ -25,7 +25,7 @@ Quick deploy (GitHub Actions CD)
    - apply application manifests
 
 Local smoke test (fast)
-- monolith-template/run_smoke.sh — runs docker-compose locally and checks /health and sample endpoints
+- service-template/run_smoke.sh — runs docker-compose locally and checks /health and sample endpoints
 - microservices-template/services/user-service/run_smoke.sh — runs the user-service locally
 
 Verification (post-deploy)

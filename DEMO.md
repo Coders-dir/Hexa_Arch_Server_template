@@ -13,7 +13,7 @@ Quick demo (copy/paste)
 Start the local test stack and run the tests (this proves the main pieces integrate):
 
 ```bash
-cd monolith-template
+cd service-template
 docker-compose -f docker-compose.test.yml up -d
 export RUN_INTEGRATION=1
 poetry install --no-interaction

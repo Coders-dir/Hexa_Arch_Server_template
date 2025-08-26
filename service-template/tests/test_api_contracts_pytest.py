@@ -8,11 +8,11 @@ def test_openapi_generation_and_contract_check():
     os.environ['PR_MODIFIES_API_CONTROLLERS'] = '1'
 
     # Generate OpenAPI
-    res = subprocess.run(['python3', 'monolith-template/tools/generate_openapi.py'], capture_output=True, text=True)
+    res = subprocess.run(['python3', 'service-template/tools/generate_openapi.py'], capture_output=True, text=True)
     assert res.returncode == 0, f"generate_openapi failed: {res.stdout}\n{res.stderr}"
 
     # Validate OpenAPI JSON
-    path = 'monolith-template/src/app/openapi.json'
+    path = 'service-template/src/app/openapi.json'
     assert os.path.exists(path), 'OpenAPI file not generated'
     with open(path, 'r', encoding='utf-8') as fh:
         data = json.load(fh)

@@ -17,14 +17,14 @@ Developer commands
 - Run the AST-based architecture checker:
 
   ```bash
-  python3 monolith-template/tools/arch_check.py
+  python3 service-template/tools/arch_check.py
   ```
 
 - Generate & validate OpenAPI (used by contract tests):
 
   ```bash
-  python3 monolith-template/tools/generate_openapi.py
-  python3 monolith-template/tools/validate_openapi.py monolith-template/src/app/openapi.json
+  python3 service-template/tools/generate_openapi.py
+  python3 service-template/tools/validate_openapi.py service-template/src/app/openapi.json
   ```
 
 - Run the policy test suite (fast):
