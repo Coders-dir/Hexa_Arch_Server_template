@@ -10,7 +10,7 @@ spec.loader.exec_module(mod)
 
 from pytest_bdd import scenario
 
-feature_path = os.path.join(here, '..', 'features', 'api', 'api.contracts.feature')
+feature_path = os.path.abspath(os.path.join(here, '..', '..', 'features', 'api', 'api.contracts.feature'))
 
 @scenario(feature_path, 'OpenAPI exists and is valid after API changes')
 def test_openapi_contract():
