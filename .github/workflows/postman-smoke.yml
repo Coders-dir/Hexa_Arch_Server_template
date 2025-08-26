@@ -1,6 +1,11 @@
 name: Postman smoke
 
 on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Optional reason for manual dispatch"
+        required: false
   pull_request:
   push:
     branches: [ main ]
