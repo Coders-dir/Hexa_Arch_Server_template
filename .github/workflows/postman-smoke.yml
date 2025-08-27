@@ -98,6 +98,9 @@ jobs:
             fi
             python -m pip install -r /tmp/requirements.txt
           fi
+          # Ensure the `redis` runtime package is available (redis is a dev dep in pyproject)
+          # QuotaManager imports `redis.asyncio` at runtime; install it explicitly to avoid startup errors
+          python -m pip install redis
 
       - name: Start app (uvicorn)
         env:
