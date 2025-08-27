@@ -11,17 +11,19 @@ jobs:
     services: {}
     steps:
       - uses: actions/checkout@v4
+
       - name: Skip if project template missing
         run: |
           if [ ! -d service-template ]; then
             echo "service-template not present; skipping monolith tests (non-fatal)."
             exit 0
           fi
-    - name: Start test services (docker compose)
+
+      - name: Start test services (docker compose)
         run: |
           set -euo pipefail
           cd service-template
-      COMPOSE_FILE=docker-compose.yml
+          COMPOSE_FILE=docker-compose.yml
           if ! command -v docker >/dev/null 2>&1; then
             echo "docker not found in runner; skipping docker-dependent monolith tests (non-fatal)."
             exit 0
@@ -36,6 +38,7 @@ jobs:
           for i in {1..30}; do docker exec service-template-redis-1 redis-cli ping && break || sleep 1; done
           # wait for mongo
           for i in {1..30}; do docker exec service-template-mongo-1 mongosh --eval 'db.runCommand({ping:1})' && break || sleep 1; done
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
