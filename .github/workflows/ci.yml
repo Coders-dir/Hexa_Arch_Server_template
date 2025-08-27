@@ -43,6 +43,15 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+      - name: Run startup-resilience tests (fast)
+        run: |
+          if [ ! -d service-template ]; then
+            echo "service-template missing; skipping startup-resilience tests."
+            exit 0
+          fi
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+          PYTHONPATH=service-template python -m pytest -q service-template/tests/test_quota_manager_degraded.py -q
       - name: Install Poetry
         run: |
           python -m pip install --upgrade pip
