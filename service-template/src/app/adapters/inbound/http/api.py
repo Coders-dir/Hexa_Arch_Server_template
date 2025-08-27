@@ -21,20 +21,36 @@ def init_app(app: FastAPI):
 	# API key repo instance (initialized on startup)
 	app.state.api_key_repo = ApiKeyRepo()
 
-	async def _startup():
-		await qm.init()
-		app.state.quota_manager = qm
-		# initialize api key repo pool
+	# schedule non-blocking initialization of external clients so uvicorn can bind immediately
+	async def _init_external():
+		# try to init quota manager and api key repo but do not raise if unavailable
+		try:
+			await qm.init()
+			app.state.quota_manager = qm
+		except Exception:
+			# logging is preferred; avoid crashing startup
+			import logging
+			logging.getLogger(__name__).warning("init_app: QuotaManager init failed; continuing in degraded mode")
 		try:
 			await app.state.api_key_repo.init()
 		except Exception:
-			# if pool init fails, keep repo available; methods will fallback to per-call connections
-			pass
+			# keep repo available; methods will fallback to per-call connections
+			import logging
+			logging.getLogger(__name__).warning("init_app: ApiKeyRepo pool init failed; methods will fallback to per-call connections")
+
+	# launch the external init as a background task on startup
+	async def _startup_bg():
+		# give the app immediate control to bind sockets
+		asyncio.create_task(_init_external())
 
 	async def _shutdown():
-		await qm.close()
+		try:
+			await qm.close()
+		except Exception:
+			pass
 
-	app.add_event_handler("startup", _startup)
+	# external initialization will run in background to avoid blocking startup
+	# (created via _startup_bg below)
 	# start a simple scheduler worker
 
 	async def _scheduler():
@@ -69,6 +85,7 @@ def init_app(app: FastAPI):
 				pass
 
 	app.add_event_handler("startup", _start_scheduler)
+	app.add_event_handler("startup", _startup_bg)
 	app.add_event_handler("shutdown", _stop_scheduler)
 	app.add_event_handler("shutdown", _shutdown)
 	# add middleware (will check app.state.quota_manager at runtime)
