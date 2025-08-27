@@ -1,0 +1,21 @@
+﻿2025-08-27T00:36:55.9623023Z ##[group]Run set -euo pipefail
+2025-08-27T00:36:55.9623391Z [36;1mset -euo pipefail[0m
+2025-08-27T00:36:55.9623795Z [36;1mcd service-template[0m
+2025-08-27T00:36:55.9624071Z [36;1m# run migrations or any bootstrap steps if present[0m
+2025-08-27T00:36:55.9624379Z [36;1mif [ -f scripts/upgrade_db.sh ]; then[0m
+2025-08-27T00:36:55.9624650Z [36;1m  bash scripts/upgrade_db.sh || true[0m
+2025-08-27T00:36:55.9624880Z [36;1mfi[0m
+2025-08-27T00:36:55.9625114Z [36;1m# start the app in background; redirect logs to a file[0m
+2025-08-27T00:36:55.9625565Z [36;1mnohup python -m uvicorn src.app.main:app --host 0.0.0.0 --port 8000 &> /tmp/uvicorn.log &[0m
+2025-08-27T00:36:55.9668505Z shell: /usr/bin/bash -e {0}
+2025-08-27T00:36:55.9668730Z env:
+2025-08-27T00:36:55.9668979Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.13/x64
+2025-08-27T00:36:55.9669383Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.13/x64/lib/pkgconfig
+2025-08-27T00:36:55.9669782Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.13/x64
+2025-08-27T00:36:55.9670180Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.13/x64
+2025-08-27T00:36:55.9670529Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.13/x64
+2025-08-27T00:36:55.9670863Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.13/x64/lib
+2025-08-27T00:36:55.9671400Z   DATABASE_URL: ***localhost:5432/test_db
+2025-08-27T00:36:55.9671673Z   REDIS_URL: redis://localhost:6379/0
+2025-08-27T00:36:55.9671932Z   MONGO_URL: mongodb://localhost:27017
+2025-08-27T00:36:55.9672167Z ##[endgroup]

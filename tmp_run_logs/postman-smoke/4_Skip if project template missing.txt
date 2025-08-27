@@ -1,0 +1,7 @@
+﻿2025-08-27T00:36:36.9523565Z ##[group]Run if [ ! -d service-template ]; then
+2025-08-27T00:36:36.9523985Z [36;1mif [ ! -d service-template ]; then[0m
+2025-08-27T00:36:36.9524422Z [36;1m  echo "service-template not present; skipping postman smoke tests (non-fatal)."[0m
+2025-08-27T00:36:36.9524818Z [36;1m  exit 0[0m
+2025-08-27T00:36:36.9524990Z [36;1mfi[0m
+2025-08-27T00:36:36.9570049Z shell: /usr/bin/bash -e {0}
+2025-08-27T00:36:36.9570302Z ##[endgroup]
