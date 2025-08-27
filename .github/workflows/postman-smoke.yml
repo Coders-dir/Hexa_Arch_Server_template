@@ -140,3 +140,13 @@ jobs:
         with:
           name: uvicorn-log
           path: /tmp/uvicorn.log
+
+      - name: Print uvicorn log
+        if: failure()
+        run: |
+          echo "=== uvicorn.log (CI diagnostic) ==="
+          if [ -f /tmp/uvicorn.log ]; then
+            sed -n '1,1000p' /tmp/uvicorn.log || true
+          else
+            echo "/tmp/uvicorn.log not found"
+          fi
