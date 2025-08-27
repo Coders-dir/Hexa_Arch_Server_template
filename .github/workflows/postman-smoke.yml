@@ -52,17 +52,50 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Cache pip and poetry caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/pypoetry
+          key: ${{ runner.os }}-pip-poetry-${{ hashFiles('**/pyproject.toml','**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-poetry-
+
       - name: Install runtime deps (Poetry)
         run: |
-          python -m pip install --upgrade pip
-          # Use a Poetry 1.x release that includes the 'export' command (Poetry 2.x removes/export moved)
+          set -euo pipefail
+          python -m pip install --upgrade pip setuptools wheel
+          # Pin Poetry 1.4.2 to preserve `poetry export` behavior used by CI
           python -m pip install "poetry==1.4.2"
           poetry --version || true
           cd service-template
           poetry config virtualenvs.create false
+
+          # helper: retry a command up to 3 times with backoff
+          retry() {
+            local n=0
+            until [ $n -ge 3 ]; do
+              "$@" && return 0
+              n=$((n+1))
+              echo "Retry $n/3: $*"
+              sleep $((n * 2))
+            done
+            return 1
+          }
+
           # prefer poetry install but tolerate failures and fall back to exported requirements
-          if ! poetry install --no-interaction; then
-            poetry export -f requirements.txt --without-hashes -o /tmp/requirements.txt
+          if ! retry poetry install --no-interaction; then
+            echo "poetry install failed after retries. Diagnostic output:"
+            poetry --version || true
+            poetry config --list || true
+            echo "Attempting poetry export to requirements.txt"
+            if ! poetry export -f requirements.txt --without-hashes -o /tmp/requirements.txt; then
+              echo "poetry export failed; printing poetry lock and pyproject snippets:" 
+              sed -n '1,80p' pyproject.toml || true
+              sed -n '1,80p' poetry.lock || true
+              exit 1
+            fi
             python -m pip install -r /tmp/requirements.txt
           fi
 
